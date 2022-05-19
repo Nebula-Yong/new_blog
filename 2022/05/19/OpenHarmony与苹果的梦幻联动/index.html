@@ -1,0 +1,1286 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="OpenHarmony与苹果的梦幻联动, Wait Aurora">
+    <meta name="description" content="Siri语音助手控制小熊派开发板.">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    
+
+    <title>OpenHarmony与苹果的梦幻联动 | Wait Aurora</title>
+    <link rel="icon" type="image/png" href="/new_blog/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/new_blog/libs/awesome/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/new_blog/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/new_blog/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/new_blog/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/new_blog/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/new_blog/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/new_blog/css/my.css">
+
+    <script src="/new_blog/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/new_blog/" class="waves-effect waves-light">
+                    
+                    <img src="/new_blog/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">Wait Aurora</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/new_blog/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/new_blog/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/new_blog/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/new_blog/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/new_blog/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/new_blog/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/new_blog/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/new_blog/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">Wait Aurora</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/new_blog/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/new_blog/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/new_blog/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/new_blog/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/new_blog/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/new_blog/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/new_blog/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/new_blog/medias/featureimages/16.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">OpenHarmony与苹果的梦幻联动</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/new_blog/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 345px;
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 30px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
+                                <span class="chip bg-color">开源鸿蒙</span>
+                            </a>
+                        
+                            <a href="/new_blog/tags/OpenHarmony/">
+                                <span class="chip bg-color">OpenHarmony</span>
+                            </a>
+                        
+                            <a href="/new_blog/tags/Linux/">
+                                <span class="chip bg-color">Linux</span>
+                            </a>
+                        
+                            <a href="/new_blog/tags/BearPi/">
+                                <span class="chip bg-color">BearPi</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/new_blog/categories/%E9%B8%BF%E8%92%99%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" class="post-category">
+                                鸿蒙嵌入式开发
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2022-05-19
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/new_blog/libs/prism/prism.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>在二月份时研究一直没有什么进展。</p>
+<p>为什么在二月份受挫呢？期间我曾归咎与小熊派的移植不够完善。但当我成功跑通网络通信的时候，我发现自己的看法是错的。当然，小熊派目前的教学资料在网络通信方面的确相对较少，对于我这种嵌入式经验相对较少的人来说门槛太高，没有一个循序渐进的过程。但最大的问题在于自己的功底不够扎实，<strong>对OpenHarmony系统没有理解透彻</strong>，以及gn编译工具的不够熟悉。</p>
+<p>好了，在写这篇文章之前，我要感谢连志安老师的一些文章和教程及代码，和润和公司一些产品的教程，以及小熊派交流群群友的指导。他们的教程和代码，让我更加深入的理解了Openharmony，才让我有能力做出了这个项目。</p>
+<p>准备开始正文，在此你可能怀疑，我没看错吧？苹果？？那个以闭源闻名的IOS系统，是怎么OpenHarmony联动起来的？不信！不信就往下看看吧。</p>
+<h2 id="二、实现效果"><a href="#二、实现效果" class="headerlink" title="二、实现效果"></a>二、实现效果</h2><p>无图无真相，直接看看实现效果<br><img src="https://harmonyos.oss-cn-beijing.aliyuncs.com/images/202204/495ce88785ca0264a508155a0e353af3b6922f.gif" alt="siri和小熊派.gif"><br>因为无法上次视频，所以截取了视频的关键帧，完整视频在附件下载。<br>可以看到，整一个流程十分的方便，这种用语音控制的方式与传统APP控制的方式，不知体验感上丝滑了多少倍！</p>
+<h2 id="三、原理分析"><a href="#三、原理分析" class="headerlink" title="三、原理分析"></a>三、原理分析</h2><p>看到这大家可能会一脸懵逼，难不成我还要教大家开发IOS程序吗？<strong>其实不用哈！</strong>这里Siri语音助手实现的效果是靠IOS自带APP<strong>捷径</strong>实现的，编写一些脚本就行。而小熊派开发板上的实现其实就是搭建了一个的TCP服务器，手机端是一个客户端，向开发板发送相应的请求。</p>
+<p>所以整个系统分为两个部分，客户端和服务端。</p>
+<h3 id="3-1-服务端"><a href="#3-1-服务端" class="headerlink" title="3.1 服务端"></a>3.1 服务端</h3><p>服务端即是小熊派上面搭建的TCP服务器，利用socket库开发的一个http服务器，用来接受客户端的请求，因为是http服务器，所以客户端的终端就很多了，并不局限在某一个设备，所以手机能成为你的客户端，电脑也可以在浏览器访问该服务（当然需要你额外设计），所有有浏览器的智能终端都能控制这个设备。</p>
+<h3 id="3-2-客户端"><a href="#3-2-客户端" class="headerlink" title="3.2 客户端"></a>3.2 客户端</h3><p>上面说到，可以在电脑打开网页的方式控制，但显然这样的控制操作体验也十分的不友好，你要记IP，记端口，还要手动输入。所以http服务器的方案是为IOS的捷径量身定制的。所以通过IOS系统的捷径制作了一个访问该网页的脚本就可以丝滑的用语音助手控制啦！</p>
+<h2 id="四、准备工作"><a href="#四、准备工作" class="headerlink" title="四、准备工作"></a>四、准备工作</h2><p>1、小熊派-鸿蒙·叔(BearPi-HM Micro)一台</p>
+<p>2、已经配置好小熊派开发环境的电脑一台</p>
+<p>3、将小熊派接入到局域网</p>
+<h2 id="五、流程简介"><a href="#五、流程简介" class="headerlink" title="五、流程简介"></a>五、流程简介</h2><p>编写TCP服务器的C文件 –&gt; 配置BUILD.gn –&gt; 将我们的代码添加编译–&gt;编译烧录</p>
+<h2 id="六、网络开发基础知识"><a href="#六、网络开发基础知识" class="headerlink" title="六、网络开发基础知识"></a>六、网络开发基础知识</h2><p>在OpenHarmony上进行网络开发与在Linux上进行网络开发十分相似，采用的是C语言的套接字（Socket）开发。</p>
+<p>进行网络开发之前，如果没有相关基础，建议先了解一下OSI网络模型与TCP/IP协议的关系。本次用到的是用Socket进行传输层的开发，使用了到了一点点应用层HTTP的协议。</p>
+<h3 id="6-1-什么是Socket"><a href="#6-1-什么是Socket" class="headerlink" title="6.1 什么是Socket"></a>6.1 什么是Socket</h3><p>在计算机通信领域，socket 被翻译为“套接字”，它是计算机之间进行通信的一种约定或一种方式。通过 socket 这种约定，一台计算机可以接收其他计算机的数据，也可以向其他计算机发送数据。</p>
+<p>总结为一句就是：<strong>socket就是整合好TCP/IP协议的一个工具</strong>。让我们无需过度关注于底层协议的实现，直接用封装好的socket就行了</p>
+<h3 id="6-2-TCP通信流程"><a href="#6-2-TCP通信流程" class="headerlink" title="6.2 TCP通信流程"></a>6.2 TCP通信流程</h3><p>在开始使用socket之前，我们要知道TCP服务器端与TCP客户端进行通信的流程。</p>
+<p><img src="/new_blog/home/nebula/%E6%96%87%E6%A1%A3/socket.jpg" alt="socket"></p>
+<p>我们小熊派要实现的是右半部分，即TCP服务器端。我们一步一步的看，每一步都有对应的代码来实现。</p>
+<p>第一步：socket()函数用来创建socket套接字，可以理解为面对对象中的创建对象，但是不等同。</p>
+<p>第二步：bind()函数用来绑定IP和端口，即选择你的TCP服务器在哪个IP和端口提供服务。</p>
+<p>第三步：listen()函数用来监听上一步中选择的IP和端口。</p>
+<p>第四步：accept()函数用来等待来自客户端的连接，即进入阻塞状态。</p>
+<p>第五步：read()函数会在有客户请求时，读取客户端发送的请求数据。</p>
+<p>第六步：write()函数可以给客户端返回数据，该操作可选，也可以不给客户端返回任何数据。</p>
+<p>第七步：read()和write()操作可以一直反复执行，即互相不断通信，当通信完成时，执行close函数关闭套接字。</p>
+<h3 id="6-3-相关函数讲解"><a href="#6-3-相关函数讲解" class="headerlink" title="6.3 相关函数讲解"></a>6.3 相关函数讲解</h3><h4 id="6-3-1创建socket套接字"><a href="#6-3-1创建socket套接字" class="headerlink" title="6.3.1创建socket套接字"></a>6.3.1创建socket套接字</h4><pre class="line-numbers language-C" data-language="C"><code class="language-C">int socket(int domain,int type,int protocol);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li><strong>domain：</strong>协议域，又称协议族(family)，常用的协议族有 AFL INET、AF INET6、AF LOCAL（或称AF UNIX, Unix成socket) AF ROUTE 等。协议族决定了 socket 的地址类型，在通信中必须采用对应的地址，如AF INET 決定了要用 ipv4 地址 （32位的》与端口号（16位的）的组合，AF UNIX 決定了要用一个绝对路径名作为地址。</li>
+<li><strong>type：</strong>指定 Socket 类型。常用的 socket 类型有 SOCK STREAM、SOCK DGRAM、SOCK RAW 、SOCK PACKET、 SOCK SEQPACKET 等。流式 socket (SOCK STREAM)是一种面向连接的 Socket， 针对于面向连接的 TCP 服务应用。数据报式 socket(SOCK DGRAM) 是一种无连接的 Socket，对应于 无连接的 UDP 服务应用。</li>
+<li><strong>protocol：</strong> 指定协议。常用协议有 IPPROTO TCP、IPPROTO UDP、IPPROTO STCP、IPPROTO TIPC 等，分别对应TCP 传输协议，UDP 传输协议、STCP 传输协议、TIPC 传输协议。参数为o时，会自动选择第二个参数类型对应的默认协议。</li>
+</ul>
+<p><strong>注意：type 和protocol 不可以随意组合，如SOCK STREAM 不可以跟 1PPROTOUDP 组合。</strong><br><strong>返回值</strong>： 如果调用成功就返口新创建的套接字的描述符，如果大败就返回INVALID SOCKET<br>(Linux 下失败返回-1).</p>
+<h4 id="6-3-2绑定端口函数"><a href="#6-3-2绑定端口函数" class="headerlink" title="6.3.2绑定端口函数"></a>6.3.2绑定端口函数</h4><pre class="line-numbers language-C" data-language="C"><code class="language-C">int bind(int socketfd,const struct sockaddr *addr,socklen_t addrlen)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li>socketfd:<br>—个标识己连接套接口的描述字。</li>
+<li>address：是个sockaddr结构指针，该结构中包含了要结合的地址和端口号。</li>
+<li>address_len：确定 address 缓冲区的长度。</li>
+</ul>
+<p><strong>注意：其中 sockaddr这个地址结构根据地址创建 socket 时的地址协议族的不同而不同。</strong></p>
+<p><strong>返回值：</strong>如果函数执行成功，返回值为0，否则为SOCKET_ERROR。</p>
+<h4 id="6-3-3开始监听函数"><a href="#6-3-3开始监听函数" class="headerlink" title="6.3.3开始监听函数"></a>6.3.3开始监听函数</h4><pre class="line-numbers language-C" data-language="C"><code class="language-C">int listen(int socketfd,int backlog)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li>socketfd：要监听的socket描述字</li>
+<li>backlog：相应socket可以排队的最大连接个数</li>
+</ul>
+<h4 id="6-3-4等待连接阻塞函数"><a href="#6-3-4等待连接阻塞函数" class="headerlink" title="6.3.4等待连接阻塞函数"></a>6.3.4等待连接阻塞函数</h4><pre class="line-numbers language-C" data-language="C"><code class="language-C">int accept(int socketfd,struct sockaddr *addr, socklen_t *addrlen);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li><strong>socketfd：</strong>就是上面解释中的监听套接字，这个套接字用来监听一个端口，当有一个客户与服务<br>器连接时，它使用这个个端口号，而此时这个端口号正与这个套接字关联。当然客户不知道套<br>接字这些细节，已只知道一个地址和一个端口号。</li>
+<li><strong>sockaddr：</strong>结果参数，它用来接受一个返回值，这返回值指定客户端的地址，当然这个地址是<br>通过某个地址结构来描述的，用户应该知道这一个什么样的地址结构。如果对客户的地址不感兴<br>趣，那么可以把这个值设置为NULL。</li>
+<li><strong>len：</strong>它也是结果的参数，用来接受上述 addr 的结构的大小的，已指明 addr 结构所占有的宇节<br>个数。同样的，它也可以被设置为NULL</li>
+</ul>
+<p><strong>注意：</strong>accept默认会阻塞进程，直到有一个客户连接建立后返回，它返回的是一个新可用的套接字，这个套接字是连接套接字。</p>
+<p><strong>返回值：</strong>成功返回客户端的文件猫述符，失败返回-1。一如果accept成功返回，则服务器与容户<br>己经正确建立连接了，此时服务器通过accept返口的套接字来完成与客户的通信。<br>5.连接函数</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">int connnect(int sockfd,const struct sockaddr *addr,socklen_t addrlen)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li>socketfd：客户端socket的描述字。</li>
+<li>socketaddr：服务器的socket地址。</li>
+<li>addrlen：socket地址的长度</li>
+</ul>
+<h4 id="6-3-5-发送函数"><a href="#6-3-5-发送函数" class="headerlink" title="6.3.5 发送函数"></a>6.3.5 发送函数</h4><p>发送函数有两个</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">ssize_t write(int sockfd,const void *buf,szie_t nbytes);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li>sockfd为要写入文件的描述符。</li>
+<li>buf为要写入数据的缓冲区地址。</li>
+<li>nbytes为要写入的数据的字节书。</li>
+</ul>
+<p><strong>返回值：</strong>成功返回写入的字节数，失败返回-1。</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">int send(int sockfd,const void *buf,int len,int flags)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li>sockfd为要写入文件的描述符。</li>
+<li>buf为要写入数据的缓冲区地址。</li>
+<li>len为要写入的数据的字节书。</li>
+<li>flags有以下选择，MSG_ DONTROUTE 为不查找路由表；MSG_OOB为接受或发送带外数据 ；MSG PEEK为查看数据,且不从系统缓冲区移走数据；MSG WAITALL为等待任何数据；0和write函数的操作一样。</li>
+</ul>
+<p><strong>返回值：</strong>成功返回写入的字节数，失败返回-1。</p>
+<h4 id="6-3-6-接受函数"><a href="#6-3-6-接受函数" class="headerlink" title="6.3.6 接受函数"></a>6.3.6 接受函数</h4><p>接受函数同样有两个</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">ssize_t read(int sockfd,const void *buf,szie_t nbytes);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li>sockfd为要读取文件的描述符。</li>
+<li>buf为要读取数据的缓冲区地址。</li>
+<li>nbytes为要读取的数据的字节书。</li>
+</ul>
+<p><strong>返回值：</strong>成功返回读取到的字节数，失败返回-1。</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">int recv(int sockfd,const void *buf,int len,int flags)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><strong>参数介绍</strong></p>
+<ul>
+<li>sockfd为要写入文件的描述符。</li>
+<li>buf为要写入数据的缓冲区地址。</li>
+<li>len为要写入的数据的字节书。</li>
+<li>flags有以下选择，MSG_ DONTROUTE 为不查找路由表；MSG_OOB为接受或发送带外数据 ；MSG PEEK为查看数据,且不从系统缓冲区移走数据；MSG WAITALL为等待任何数据；0和write函数的操作一样。</li>
+</ul>
+<p><strong>返回值：</strong>成功返回写入的字节数，失败返回-1。</p>
+<h2 id="七、WIFI配置"><a href="#七、WIFI配置" class="headerlink" title="七、WIFI配置"></a>七、WIFI配置</h2><p>打开applications/BearPi/BearPi-HM_Micro/samples/communication/wpa_supplicant/config/wpa_supplicant.conf配置文件，修改ssid和psk为你自己家路由器或者手机热点的名字和密码。<br><img src="https://harmonyos.oss-cn-beijing.aliyuncs.com/images/202204/17b844a3699ef76d2cc0307c2a2d6c72705c62.png?x-oss-process=image/resize,w_758,h_467" alt="wifi配置.png"></p>
+<h2 id="八、业务代码编写"><a href="#八、业务代码编写" class="headerlink" title="八、业务代码编写"></a>八、业务代码编写</h2><p>我们在工程目录下/applications/BearPi/BearPi-HM_Micro/samples里面存放我们的代码。</p>
+<p>目录结构如下</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c">├─ tcp_http  		#源码目录
+     ├── BUILD<span class="token punctuation">.</span>gn	#编辑配置文件
+     └── tcp_http<span class="token punctuation">.</span>c	#网络通信源码
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="8-1-编写TCP服务器源码"><a href="#8-1-编写TCP服务器源码" class="headerlink" title="8.1 编写TCP服务器源码"></a>8.1 编写TCP服务器源码</h3><p>本部分是整个TCP服务器实现的核心，打开我们创建的tcp_http.c文件，添加以下代码。为了方便测试代码的有效性，我们先拿TCP服务器做一个简单的网站，用到了一点点简单的HTTP协议。</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;arpa/inet.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;sys/types.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;sys/socket.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;netinet/in.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;unistd.h></span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+	<span class="token comment">//1创建socket</span>
+	<span class="token keyword">int</span> socket_server <span class="token operator">=</span> <span class="token function">socket</span><span class="token punctuation">(</span>AF_INET<span class="token punctuation">,</span>SOCK_STREAM<span class="token punctuation">,</span>IPPROTO_TCP<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">int</span> opt <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+	<span class="token function">setsockopt</span><span class="token punctuation">(</span>socket_server<span class="token punctuation">,</span>SOL_SOCKET<span class="token punctuation">,</span>SO_REUSEADDR<span class="token punctuation">,</span><span class="token operator">&amp;</span>opt<span class="token punctuation">,</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span> opt <span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//该函数解决端口占用问题</span>
+	<span class="token comment">//2.绑定端口</span>
+	<span class="token keyword">struct</span> <span class="token class-name">sockaddr_in</span> server_addr<span class="token punctuation">;</span>
+	<span class="token function">memset</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>server_addr<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token keyword">struct</span> <span class="token class-name">sockaddr_in</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//把结构体里面的数据清零</span>
+	server_addr<span class="token punctuation">.</span>sin_port <span class="token operator">=</span> <span class="token function">htons</span><span class="token punctuation">(</span><span class="token number">80</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	server_addr<span class="token punctuation">.</span>sin_addr<span class="token punctuation">.</span>s_addr <span class="token operator">=</span> <span class="token function">htonl</span><span class="token punctuation">(</span>INADDR_ANY<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//任意ip都能访问此服务</span>
+	server_addr<span class="token punctuation">.</span>sin_family <span class="token operator">=</span> AF_INET<span class="token punctuation">;</span>
+	<span class="token function">bind</span><span class="token punctuation">(</span>socket_server<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">struct</span> <span class="token class-name">sockaddr</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>server_addr<span class="token punctuation">,</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span>server_addr<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token comment">//3.监听端口</span>
+	<span class="token function">listen</span><span class="token punctuation">(</span>socket_server<span class="token punctuation">,</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//5表示最大连接数</span>
+	<span class="token keyword">while</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+		<span class="token comment">//4.进入阻塞状态</span>
+		<span class="token keyword">struct</span> <span class="token class-name">sockaddr_in</span> client_addr<span class="token punctuation">;</span>
+		<span class="token keyword">int</span> client_lenght <span class="token operator">=</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>client_addr<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token keyword">int</span> client_id <span class="token operator">=</span> <span class="token function">accept</span><span class="token punctuation">(</span>socket_server<span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">struct</span> <span class="token class-name">sockaddr</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>client_addr<span class="token punctuation">,</span><span class="token operator">&amp;</span>client_lenght<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token comment">//5.读取客户端发来的消息</span>
+		<span class="token keyword">char</span> buffer<span class="token punctuation">[</span><span class="token number">1024</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+		<span class="token function">recv</span><span class="token punctuation">(</span>client_id<span class="token punctuation">,</span>buffer<span class="token punctuation">,</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span>buffer<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s"</span><span class="token punctuation">,</span>buffer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token comment">//5.根据HTTP协议的格式，反馈一个网页给客户端</span>
+		<span class="token keyword">const</span> <span class="token keyword">char</span> buf<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token string">"HTTP/1.1 200 OK\r\nDate: Fri, 22 May 2009 06:07:21 GMT\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n&lt;html>&lt;head>&lt;/head>&lt;body>&lt;p>Hello Openharmony!&lt;/p>&lt;/body>&lt;/html>"</span><span class="token punctuation">;</span> 
+		<span class="token function">send</span><span class="token punctuation">(</span>client_id<span class="token punctuation">,</span>buf<span class="token punctuation">,</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span>buf<span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token comment">//6.关闭套接字</span>
+		<span class="token function">close</span><span class="token punctuation">(</span>client_id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">&#125;</span>
+	<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="8-2-配置BUILD-gn文件"><a href="#8-2-配置BUILD-gn文件" class="headerlink" title="8.2 配置BUILD.gn文件"></a>8.2 配置BUILD.gn文件</h3><pre class="line-numbers language-cmake" data-language="cmake"><code class="language-cmake"><span class="token function">import</span><span class="token punctuation">(</span><span class="token string">"//build/lite/config/component/lite_component.gni"</span><span class="token punctuation">)</span>
+<span class="token function">executable</span><span class="token punctuation">(</span><span class="token string">"tcp_http"</span><span class="token punctuation">)</span> &#123;
+    sources = [
+        <span class="token string">"tcp_http.c"</span>,
+    ]
+    include_dirs = [
+    ]
+<span class="token punctuation">&#125;</span>
+
+<span class="token function">lite_component</span><span class="token punctuation">(</span><span class="token string">"net_app"</span><span class="token punctuation">)</span> &#123;
+    features = [
+        <span class="token string">":tcp_http"</span>,
+    ]
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="8-3-配置编译组件"><a href="#8-3-配置编译组件" class="headerlink" title="8.3 配置编译组件"></a>8.3 配置编译组件</h3><p>我们要将我们的代码加入到my_sample组件中，打开build/lite/components/applications.json</p>
+<p><img src="https://harmonyos.oss-cn-beijing.aliyuncs.com/images/202204/b18347e0771b303e0af565624a7d6eb32192d4.jpeg?x-oss-process=image/resize,w_757,h_462" alt="添加组件.jpeg"></p>
+<p>添加图中的两条路径</p>
+<h2 id="九、编译烧录"><a href="#九、编译烧录" class="headerlink" title="九、编译烧录"></a>九、编译烧录</h2><h3 id="9-1-编译"><a href="#9-1-编译" class="headerlink" title="9.1 编译"></a>9.1 编译</h3><pre class="line-numbers language-sh" data-language="sh"><code class="language-sh"># 进入下载路径
+cd ~&#x2F;bearpi-hm_micro_small
+# 开始编译
+hb set
+# 输入当前路径
+.
+# 回车选择“bearpi-hm_micro”
+# 编译
+hb build -t notest --tee -f
+# 等待直到屏幕出现：build success字样，说明编译成功。
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="9-2-烧录"><a href="#9-2-烧录" class="headerlink" title="9.2 烧录"></a>9.2 烧录</h3><p>先复制出来编译好的镜像</p>
+<pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">cp out&#x2F;bearpi_hm_micro&#x2F;bearpi_hm_micro&#x2F;OHOS_Image.stm32 applications&#x2F;BearPi&#x2F;BearPi-HM_Micro&#x2F;tools&#x2F;download_img&#x2F;kernel&#x2F;
+cp out&#x2F;bearpi_hm_micro&#x2F;bearpi_hm_micro&#x2F;rootfs_vfat.img applications&#x2F;BearPi&#x2F;BearPi-HM_Micro&#x2F;tools&#x2F;download_img&#x2F;kernel&#x2F;
+cp out&#x2F;bearpi_hm_micro&#x2F;bearpi_hm_micro&#x2F;userfs_vfat.img applications&#x2F;BearPi&#x2F;BearPi-HM_Micro&#x2F;tools&#x2F;download_img&#x2F;kernel&#x2F;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>再使用STM32CubeProgrammer烧录镜像，纯Linux开发环境参考我之前的教程，Windows混合开发环境请参考官方教程。</p>
+<h2 id="十、测试"><a href="#十、测试" class="headerlink" title="十、测试"></a>十、测试</h2><p>烧录成功后，切换拨码，进入到系统。</p>
+<p>串口连接小熊派的ohos终端，首先要进行wifi配置，在终端输入以下命令配置wifi</p>
+<pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">.&#x2F;bin&#x2F;wpa_supplicant -i wlan0 -d -c &#x2F;etc&#x2F;wpa_supplicant.conf<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>输入此命令后大概等3分钟，等待小熊派连接上wifi，</p>
+<p>通过以下命令查看是否分配到ip可以知道小熊派是否已经连接上了wifi</p>
+<pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">ifconfig<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="https://harmonyos.oss-cn-beijing.aliyuncs.com/images/202204/f759c8949549beb8ee6915393ddd95d76b26d6.png?x-oss-process=image/resize,w_730,h_147" alt="查看IP.png"></p>
+<p>如果有了IP表示已经连接上了wifi，我们接着运行我们写tcp服务器。</p>
+<pre class="line-numbers language-sh" data-language="sh"><code class="language-sh">cd bin&#x2F;		#先进入到bin目录中	
+.&#x2F;tcp_http	#运行我们的程序<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>接着我们可以在我们同在一个局域网的电脑上，打开浏览器，输入小熊派的ip访问服务器。</p>
+<p><img src="https://harmonyos.oss-cn-beijing.aliyuncs.com/images/202204/e65604306819e8968cb2194cc894ac8b9fe9ea.png?x-oss-process=image/resize,w_677,h_550" alt="检查是否成功开启.png"><br>浏览器能够成功显示“Hello Openharmony”，表示已经成功搭建好了TCP服务器。</p>
+<h2 id="十一、尾言"><a href="#十一、尾言" class="headerlink" title="十一、尾言"></a>十一、尾言</h2><p>大家可能关心一开始的与苹果siri联动的怎么实现，考虑大多数小伙伴的复现，先做了一个简单的http服务器，大家可以直接在浏览器上访问即可以调试。下篇文章会给大家最终实现的代码。希望大家能用网络通信，开发更多有意思的项目。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/new_blog/about" rel="external nofollow noreferrer">Nebula-Yong</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="https://nebula-yong.github.io/new_blog/new_blog/2022/05/19/OpenHarmony%E4%B8%8E%E8%8B%B9%E6%9E%9C%E7%9A%84%E6%A2%A6%E5%B9%BB%E8%81%94%E5%8A%A8/">https://nebula-yong.github.io/new_blog/new_blog/2022/05/19/OpenHarmony%E4%B8%8E%E8%8B%B9%E6%9E%9C%E7%9A%84%E6%A2%A6%E5%B9%BB%E8%81%94%E5%8A%A8/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/new_blog/about" target="_blank">Nebula-Yong</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
+                                    <span class="chip bg-color">开源鸿蒙</span>
+                                </a>
+                            
+                                <a href="/new_blog/tags/OpenHarmony/">
+                                    <span class="chip bg-color">OpenHarmony</span>
+                                </a>
+                            
+                                <a href="/new_blog/tags/Linux/">
+                                    <span class="chip bg-color">Linux</span>
+                                </a>
+                            
+                                <a href="/new_blog/tags/BearPi/">
+                                    <span class="chip bg-color">BearPi</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/new_blog/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/new_blog/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/new_blog/2022/05/19/OpenHarmony%E4%B8%8E%E8%8B%B9%E6%9E%9C%E7%9A%84%E6%A2%A6%E5%B9%BB%E8%81%94%E5%8A%A8/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/new_blog/medias/featureimages/16.jpg" class="responsive-img" alt="OpenHarmony与苹果的梦幻联动">
+                        
+                        <span class="card-title">OpenHarmony与苹果的梦幻联动</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            Siri语音助手控制小熊派开发板.
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-05-19
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/new_blog/categories/%E9%B8%BF%E8%92%99%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" class="post-category">
+                                    鸿蒙嵌入式开发
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
+                        <span class="chip bg-color">开源鸿蒙</span>
+                    </a>
+                    
+                    <a href="/new_blog/tags/OpenHarmony/">
+                        <span class="chip bg-color">OpenHarmony</span>
+                    </a>
+                    
+                    <a href="/new_blog/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
+                    </a>
+                    
+                    <a href="/new_blog/tags/BearPi/">
+                        <span class="chip bg-color">BearPi</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/new_blog/2022/05/18/hello-world/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/new_blog/medias/featureimages/12.jpg" class="responsive-img" alt="Hello World">
+                        
+                        <span class="card-title">Hello World</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-05-18
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Nebula-Yong
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/new_blog/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/new_blog/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/new_blog/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/new_blog/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/new_blog/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/new_blog/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/new_blog/libs/aplayer/APlayer.min.js"></script>
+<script src="/new_blog/libs/aplayer/Meting.min.js"></script>
+
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2022</span>
+            
+            <a href="/new_blog/about" target="_blank">Nebula-Yong</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/Nebula-Yong" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:3312428491@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=3312428491" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 3312428491" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/new_blog/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/new_blog/libs/materialize/materialize.min.js"></script>
+    <script src="/new_blog/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/new_blog/libs/aos/aos.js"></script>
+    <script src="/new_blog/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/new_blog/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/new_blog/js/matery.js"></script>
+
+    
+
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/new_blog/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    <script src="/new_blog/libs/others/clicklove.js" async="async"></script>
+    
+    
+    <script async src="/new_blog/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/new_blog/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
