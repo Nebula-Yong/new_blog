@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="小熊派驱动开发流程, Wait Aurora">
+    <meta name="keywords" content="小熊派驱动调用流程, Wait Aurora">
     <meta name="description" content="本篇文章将讲解如何在小熊派上进行驱动开发.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -19,7 +19,7 @@
 
     
 
-    <title>小熊派驱动开发流程 | Wait Aurora</title>
+    <title>小熊派驱动调用流程 | Wait Aurora</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -246,12 +246,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">小熊派驱动开发流程</h1>
+                    <h1 class="description center-align post-title">小熊派驱动调用流程</h1>
                 </div>
             </div>
         </div>
@@ -404,7 +404,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-02-06
+                    2022-02-12
                 </div>
                 
 
@@ -428,33 +428,114 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="小熊派驱动开发流程（以点亮LED灯为例）"><a href="#小熊派驱动开发流程（以点亮LED灯为例）" class="headerlink" title="小熊派驱动开发流程（以点亮LED灯为例）"></a>小熊派驱动开发流程（以点亮LED灯为例）</h1><h2 id="一、流程总览"><a href="#一、流程总览" class="headerlink" title="一、流程总览"></a>一、流程总览</h2><p>创建驱动目录并添加<strong>驱动源码文件</strong>和<strong>编译脚本</strong>–&gt;添加驱动配置目录和<strong>驱动配置文件</strong></p>
-<h2 id="二、添加驱动文件"><a href="#二、添加驱动文件" class="headerlink" title="二、添加驱动文件"></a>二、添加驱动文件</h2><h3 id="2-1-创建驱动文件夹"><a href="#2-1-创建驱动文件夹" class="headerlink" title="2.1 创建驱动文件夹"></a>2.1 创建驱动文件夹</h3><p>在./device/st/drivers路径下新建一个led目录，用于存放驱动源码文件。</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E9%A9%B1%E5%8A%A8%E7%9B%AE%E5%BD%95.png" alt="驱动目录"></p>
-<h3 id="2-2-创建驱动源码文件"><a href="#2-2-创建驱动源码文件" class="headerlink" title="2.2 创建驱动源码文件"></a>2.2 创建驱动源码文件</h3><p>新建led.c文件，编写驱动源码</p>
-<pre class="line-numbers language-C" data-language="C"><code class="language-C">#include &quot;hdf_device_desc.h&quot; 
-#include &quot;hdf_log.h&quot;         
-#include &quot;device_resource_if.h&quot;
-#include &quot;osal_io.h&quot;
-#include &quot;osal.h&quot;
-#include &quot;osal_mem.h&quot;
-#include &quot;gpio_if.h&quot;
+                <h1 id="小熊派驱动调用流程（以调用LED灯驱动为例）"><a href="#小熊派驱动调用流程（以调用LED灯驱动为例）" class="headerlink" title="小熊派驱动调用流程（以调用LED灯驱动为例）"></a>小熊派驱动调用流程（以调用LED灯驱动为例）</h1><h2 id="一、流程总览"><a href="#一、流程总览" class="headerlink" title="一、流程总览"></a>一、流程总览</h2><p>驱动调用的流程和纯代码开发的流程十分相似，本文着重点在于驱动调用的逻辑。</p>
+<p>创建目录及相应源码文件–&gt;编写驱动调用代码–&gt;编写编译构建文件BUILD.gn–&gt;编译烧录运行</p>
+<h2 id="二、源码目录结构"><a href="#二、源码目录结构" class="headerlink" title="二、源码目录结构"></a>二、源码目录结构</h2><p>在./applications/BearPi/BearPi-HM_Micro/samples/目录下创建</p>
+<p>my_led_app 源码目录</p>
+<p>*my_led_app.c  驱动调用源码</p>
+<p>*BUILD.gn  源码编译脚本</p>
+<p>如图所示</p>
+<p><img src="/2022/02/12/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B/%E6%BA%90%E7%A0%81%E7%9B%AE%E5%BD%95.png" alt="源码目录"></p>
+<h2 id="三、编写驱动调用代码"><a href="#三、编写驱动调用代码" class="headerlink" title="三、编写驱动调用代码"></a>三、编写驱动调用代码</h2><p>在my_led_app.c中编写如下代码</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">#include &lt;fcntl.h&gt;
+#include &lt;sys&#x2F;stat.h&gt;
+#include &lt;sys&#x2F;ioctl.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;stdio.h&gt;
+#include &quot;hdf_sbuf.h&quot;
+#include &quot;hdf_io_service_if.h&quot;
 
-#define HDF_LOG_TAG led_driver &#x2F;&#x2F; 打印日志所包含的标签，如果不定义则用默认定义的HDF_TAG标签
-#define LED_WRITE_READ 1       &#x2F;&#x2F; 读写操作码1
+#define LED_WRITE_READ 1
+#define LED_SERVICE &quot;hdf_led&quot;
 
-enum LedOps &#123;
-    LED_OFF,
-    LED_ON,  
-    LED_TOGGLE,
-&#125;;
+static int SendEvent(struct HdfIoService *serv, uint8_t eventData)
+&#123;
+    int ret &#x3D; 0;
+    struct HdfSBuf *data &#x3D; HdfSBufObtainDefaultSize();
+    if (data &#x3D;&#x3D; NULL)
+    &#123;
+        printf(&quot;fail to obtain sbuf data!\r\n&quot;);
+        return 1;
+    &#125;
 
-struct Stm32Mp1ILed &#123;
-    uint32_t gpioNum;
-&#125;;
-static struct Stm32Mp1ILed g_Stm32Mp1ILed;
-uint8_t status &#x3D; 0;
-&#x2F;&#x2F; Dispatch是用来处理用户态发下来的消息
+    struct HdfSBuf *reply &#x3D; HdfSBufObtainDefaultSize();
+    if (reply &#x3D;&#x3D; NULL)
+    &#123;
+        printf(&quot;fail to obtain sbuf reply!\r\n&quot;);
+        ret &#x3D; HDF_DEV_ERR_NO_MEMORY;
+        goto out;
+    &#125;
+    &#x2F;* 写入数据 *&#x2F;
+    if (!HdfSbufWriteUint8(data, eventData))
+    &#123;
+        printf(&quot;fail to write sbuf!\r\n&quot;);
+        ret &#x3D; HDF_FAILURE;
+        goto out;
+    &#125;
+    &#x2F;* 通过Dispatch发送到驱动 *&#x2F;
+    ret &#x3D; serv-&gt;dispatcher-&gt;Dispatch(&amp;serv-&gt;object, LED_WRITE_READ, data, reply);
+    if (ret !&#x3D; HDF_SUCCESS)
+    &#123;
+        printf(&quot;fail to send service call!\r\n&quot;);
+        goto out;
+    &#125;
+
+    int replyData &#x3D; 0;
+    &#x2F;* 读取驱动的回复数据 *&#x2F;
+    if (!HdfSbufReadInt32(reply, &amp;replyData))
+    &#123;
+        printf(&quot;fail to get service call reply!\r\n&quot;);
+        ret &#x3D; HDF_ERR_INVALID_OBJECT;
+        goto out;
+    &#125;
+    printf(&quot;\r\nGet reply is: %d\r\n&quot;, replyData);
+out:
+    HdfSBufRecycle(data);
+    HdfSBufRecycle(reply);
+    return ret;
+&#125;
+
+int main(int argc, char **argv)
+&#123;
+    int i;
+    
+    &#x2F;* 获取服务 *&#x2F;
+    struct HdfIoService *serv &#x3D; HdfIoServiceBind(LED_SERVICE);
+    if (serv &#x3D;&#x3D; NULL)
+    &#123;
+        printf(&quot;fail to get service %s!\r\n&quot;, LED_SERVICE);
+        return HDF_FAILURE;
+    &#125;
+
+    for (i&#x3D;0; i &lt; argc; i++)
+    &#123;
+        printf(&quot;\r\nArgument %d is %s.\r\n&quot;, i, argv[i]);
+    &#125;
+
+    SendEvent(serv, atoi(argv[1]));
+
+    HdfIoServiceRecycle(serv);
+    printf(&quot;exit&quot;);
+
+    return HDF_SUCCESS;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>这一部分是本文的重点部分</strong></p>
+<p>OpenHarmony的设备开发中的驱动调用与单片机的驱动开发不太相同，以往单片机的驱动调用往往是采用库函数调用的方式，但OpenHarmony的驱动调用采用的是驱动程序暴露出一个server，程序通过Dispatch发送指令的方式。有点类似与ROS的消息通信机制中的话题发布和订阅。在OpenHarmony中驱动调用的这部分程序属于用户程序，是用户态的内容，而驱动是内核态的内容。所以用户程序无法直接访问驱动，上面代码通过Dispatch向驱动程序发送指令从而实现LED灯的亮灭。</p>
+<h3 id="3-1-发送指令到驱动程序"><a href="#3-1-发送指令到驱动程序" class="headerlink" title="3.1 发送指令到驱动程序"></a>3.1 发送指令到驱动程序</h3><p>我们看下my_led_app.c中<strong>SendEvent函数</strong>中通过Dispatch发送到驱动的代码</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">&#x2F;* 通过Dispatch发送到驱动 *&#x2F;
+    ret &#x3D; serv-&gt;dispatcher-&gt;Dispatch(&amp;serv-&gt;object, LED_WRITE_READ, data, reply);
+    if (ret !&#x3D; HDF_SUCCESS)
+    &#123;
+        printf(&quot;fail to send service call!\r\n&quot;);
+        goto out;
+    &#125;
+
+    int replyData &#x3D; 0;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这段代码实现将指令发送到驱动程序</p>
+<p>驱动程序指令接受的的代码在<a href="%5B%E3%80%90FFH%E3%80%91%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B%EF%BC%88%E4%BB%A5%E7%82%B9%E4%BA%AELED%E7%81%AF%E4%B8%BA%E4%BE%8B%EF%BC%89-%E9%B8%BF%E8%92%99HarmonyOS%E6%8A%80%E6%9C%AF%E7%A4%BE%E5%8C%BA-%E9%B8%BF%E8%92%99%E5%AE%98%E6%96%B9%E5%90%88%E4%BD%9C%E4%BC%99%E4%BC%B4-51CTO.COM%5D(https://harmonyos.51cto.com/posts/10304)">上一篇文章</a>中的led.c驱动代码中的<strong>LedDriverDispatch函数</strong></p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">&#x2F;&#x2F; Dispatch是用来处理用户态发下来的消息
 int32_t LedDriverDispatch(struct HdfDeviceIoClient *client, int cmdCode, struct HdfSBuf *data, struct HdfSBuf *reply)
 &#123;
     uint8_t contrl;
@@ -510,149 +591,71 @@ int32_t LedDriverDispatch(struct HdfDeviceIoClient *client, int cmdCode, struct 
         break;
     &#125;
     return HDF_SUCCESS;
-&#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-&#x2F;&#x2F; 读取驱动私有配置
-static int32_t Stm32LedReadDrs(struct Stm32Mp1ILed *led, const struct DeviceResourceNode *node)
-&#123;
-    int32_t ret;
-    struct DeviceResourceIface *drsOps &#x3D; NULL;
+<h3 id="3-2-从驱动程序接受数据"><a href="#3-2-从驱动程序接受数据" class="headerlink" title="3.2 从驱动程序接受数据"></a>3.2 从驱动程序接受数据</h3><p>刚刚实现了用户态向内核态发送指令，同理，内核态也可以向用户态发送数据。</p>
+<p>让我们看看驱动代码中向用户发送LED状态信息的代码（在led.c中LedDriverDispatch函数的一部分）</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">&#x2F;* 把LED的状态值写入reply, 可被带至用户程序 *&#x2F;
+        if (!HdfSbufWriteInt32(reply, status))                
+        &#123;
+            HDF_LOGE(&quot;replay is fail&quot;);
+            return HDF_FAILURE;
+        &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-    drsOps &#x3D; DeviceResourceGetIfaceInstance(HDF_CONFIG_SOURCE);
-    if (drsOps &#x3D;&#x3D; NULL || drsOps-&gt;GetUint32 &#x3D;&#x3D; NULL) &#123;
-        HDF_LOGE(&quot;%s: invalid drs ops!&quot;, __func__);
-        return HDF_FAILURE;
-    &#125;
-    &#x2F;* 读取led.hcs里面led_gpio_num的值 *&#x2F;
-    ret &#x3D; drsOps-&gt;GetUint32(node, &quot;led_gpio_num&quot;, &amp;led-&gt;gpioNum, 0); 
-    if (ret !&#x3D; HDF_SUCCESS) &#123;
-        HDF_LOGE(&quot;%s: read led gpio num fail!&quot;, __func__);
-        return ret;
-    &#125;
-    return HDF_SUCCESS;
-&#125;
-
-&#x2F;&#x2F;驱动对外提供的服务能力，将相关的服务接口绑定到HDF框架
-int32_t HdfLedDriverBind(struct HdfDeviceObject *deviceObject)
-&#123;
-    if (deviceObject &#x3D;&#x3D; NULL)
+<p>下面是用户程序接收的部分</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">&#x2F;* 读取驱动的回复数据 *&#x2F;
+    if (!HdfSbufReadInt32(reply, &amp;replyData))
     &#123;
-        HDF_LOGE(&quot;Led driver bind failed!&quot;);
-        return HDF_ERR_INVALID_OBJECT;
+        printf(&quot;fail to get service call reply!\r\n&quot;);
+        ret &#x3D; HDF_ERR_INVALID_OBJECT;
+        goto out;
     &#125;
-    static struct IDeviceIoService ledDriver &#x3D; &#123;
-        .Dispatch &#x3D; LedDriverDispatch,
-    &#125;;
-    deviceObject-&gt;service &#x3D; (struct IDeviceIoService *)(&amp;ledDriver);
-    HDF_LOGD(&quot;Led driver bind success&quot;);
-    return HDF_SUCCESS;
-&#125;
+    printf(&quot;\r\nGet reply is: %d\r\n&quot;, replyData);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-&#x2F;&#x2F; 驱动自身业务初始的接口
-int32_t HdfLedDriverInit(struct HdfDeviceObject *device)
-&#123;
-    struct Stm32Mp1ILed *led &#x3D; &amp;g_Stm32Mp1ILed;
-    int32_t ret;
+<h2 id="四、编写编译构建文件BUILD-gn"><a href="#四、编写编译构建文件BUILD-gn" class="headerlink" title="四、编写编译构建文件BUILD.gn"></a>四、编写编译构建文件BUILD.gn</h2><p>在BUILD.gn中添加以下代码</p>
+<pre class="line-numbers language-cmake" data-language="cmake"><code class="language-cmake"><span class="token function">import</span><span class="token punctuation">(</span><span class="token string">"//build/lite/config/component/lite_component.gni"</span><span class="token punctuation">)</span>
 
-    if (device &#x3D;&#x3D; NULL || device-&gt;property &#x3D;&#x3D; NULL) &#123;
-        HDF_LOGE(&quot;%s: device or property NULL!&quot;, __func__);
-        return HDF_ERR_INVALID_OBJECT;
-    &#125;
-    &#x2F;* 读取hcs私有属性值 *&#x2F;
-    ret &#x3D; Stm32LedReadDrs(led, device-&gt;property);
-    if (ret !&#x3D; HDF_SUCCESS) &#123;
-        HDF_LOGE(&quot;%s: get led device resource fail:%d&quot;, __func__, ret);
-        return ret;
-    &#125;
-    &#x2F;* 将GPIO管脚配置为输出 *&#x2F;
-    ret &#x3D; GpioSetDir(led-&gt;gpioNum, GPIO_DIR_OUT);
-    if (ret !&#x3D; 0)
-    &#123;
-        HDF_LOGE(&quot;GpioSerDir: failed, ret %d\n&quot;, ret);
-        return ret;
-    &#125;
-    HDF_LOGD(&quot;Led driver Init success&quot;);
-    return HDF_SUCCESS;
-&#125;
+HDF_FRAMEWORKS = <span class="token string">"//drivers/framework"</span>
 
-&#x2F;&#x2F; 驱动资源释放的接口
-void HdfLedDriverRelease(struct HdfDeviceObject *deviceObject)
-&#123;
-    if (deviceObject &#x3D;&#x3D; NULL)
-    &#123;
-        HDF_LOGE(&quot;Led driver release failed!&quot;);
-        return;
-    &#125;
-    HDF_LOGD(&quot;Led driver release success&quot;);
-    return;
-&#125;
-
-&#x2F;&#x2F; 定义驱动入口的对象，必须为HdfDriverEntry（在hdf_device_desc.h中定义）类型的全局变量
-struct HdfDriverEntry g_ledDriverEntry &#x3D; &#123;
-    .moduleVersion &#x3D; 1,
-    .moduleName &#x3D; &quot;HDF_LED&quot;,
-    .Bind &#x3D; HdfLedDriverBind,
-    .Init &#x3D; HdfLedDriverInit,
-    .Release &#x3D; HdfLedDriverRelease,
-&#125;;
-
-&#x2F;&#x2F; 调用HDF_INIT将驱动入口注册到HDF框架中
-HDF_INIT(g_ledDriverEntry);
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="2-3-创建编译脚本文件"><a href="#2-3-创建编译脚本文件" class="headerlink" title="2.3 创建编译脚本文件"></a>2.3 创建编译脚本文件</h3><p>新建BUILD.gn文件，添加以下内容</p>
-<pre class="line-numbers language-cmake" data-language="cmake"><code class="language-cmake"><span class="token function">import</span><span class="token punctuation">(</span><span class="token string">"//drivers/adapter/khdf/liteos/hdf.gni"</span><span class="token punctuation">)</span>
-
-<span class="token function">hdf_driver</span><span class="token punctuation">(</span><span class="token string">"hdf_led"</span><span class="token punctuation">)</span> &#123;
+<span class="token function">executable</span><span class="token punctuation">(</span><span class="token string">"led_lib"</span><span class="token punctuation">)</span> &#123;
+    output_name = <span class="token string">"my_led"</span>
     sources = [
-    <span class="token string">"led.c"</span>,
+        <span class="token string">"my_led_app.c"</span>,
     ]
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h3 id="2-4-修改drivers的编译脚本使之编译进内核"><a href="#2-4-修改drivers的编译脚本使之编译进内核" class="headerlink" title="2.4 修改drivers的编译脚本使之编译进内核"></a>2.4 修改drivers的编译脚本使之编译进内核</h3><p>在/device/st/drivers/BUILD.gn的deps中加入”led”</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E7%BC%96%E8%AF%91%E8%BF%9B%E5%86%85%E6%A0%B8.png" alt="编译进内核"></p>
-<h2 id="三、添加驱动配置文件"><a href="#三、添加驱动配置文件" class="headerlink" title="三、添加驱动配置文件"></a>三、添加驱动配置文件</h2><p>驱动配置包含两部分，HDF框架定义的<strong>驱动的私有配置信息</strong>和<strong>驱动设备描述</strong></p>
-<h3 id="3-1-创建驱动配置文件夹"><a href="#3-1-创建驱动配置文件夹" class="headerlink" title="3.1 创建驱动配置文件夹"></a>3.1 创建驱动配置文件夹</h3><p>在./device/st/bearpi_hm_micro/liteos_a/hdf_config路径下新建一个led目录，用于存放led驱动配置文件。</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E9%A9%B1%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9B%AE%E5%BD%95.png" alt="驱动配置目录"></p>
-<h3 id="3-2-创建驱动私有配置文件"><a href="#3-2-创建驱动私有配置文件" class="headerlink" title="3.2 创建驱动私有配置文件"></a>3.2 创建驱动私有配置文件</h3><p>在led文件夹下创建led_config.hcs文件，该文件为驱动配置文件。</p>
-<p>添加以下内容</p>
-<pre class="line-numbers language-none"><code class="language-none">root &#123;
-    LedDriverConfig &#123;
-        led_gpio_num &#x3D; 13;
-        match_attr &#x3D; &quot;st_stm32mp157_led&quot;; &#x2F;&#x2F;该字段的值必须和device_info.hcs中的deviceMatchAttr值一致
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    include_dirs = [
+    <span class="token string">"$HDF_FRAMEWORKS/ability/sbuf/include"</span>,
+    <span class="token string">"$HDF_FRAMEWORKS/core/shared/include"</span>,
+    <span class="token string">"$HDF_FRAMEWORKS/core/host/include"</span>,
+    <span class="token string">"$HDF_FRAMEWORKS/core/master/include"</span>,
+    <span class="token string">"$HDF_FRAMEWORKS/include/core"</span>,
+    <span class="token string">"$HDF_FRAMEWORKS/include/utils"</span>,
+    <span class="token string">"$HDF_FRAMEWORKS/utils/include"</span>,
+    <span class="token string">"$HDF_FRAMEWORKS/include/osal"</span>,
+    <span class="token string">"//drivers/adapter/uhdf/posix/include"</span>,
+    <span class="token string">"//third_party/bounds_checking_function/include"</span>,
+    <span class="token string">"//base/hiviewdfx/hilog_lite/interfaces/native/innerkits"</span>,
+    ]
 
+    deps = [
+        <span class="token string">"//base/hiviewdfx/hilog_lite/frameworks/featured:hilog_shared"</span>,
+        <span class="token string">"//drivers/adapter/uhdf/manager:hdf_core"</span>,
+        <span class="token string">"//drivers/adapter/uhdf/posix:hdf_posix_osal"</span>,
+    ]
+<span class="token punctuation">&#125;</span>
 
+<span class="token function">lite_component</span><span class="token punctuation">(</span><span class="token string">"my_led_app"</span><span class="token punctuation">)</span> &#123;
+    features = [
+        <span class="token string">":led_lib"</span>,
+    ]
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h3 id="3-3-添加驱动设备描述"><a href="#3-3-添加驱动设备描述" class="headerlink" title="3.3 添加驱动设备描述"></a>3.3 添加驱动设备描述</h3><p>在device\st\bearpi_hm_micro\liteos_a\hdf_config\device_info\device_info.hcs文件中添加以下代码</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">device_led :: device &#123; &#x2F;&#x2F; led设备节点
-	device0 :: deviceNode &#123; &#x2F;&#x2F; led驱动的DeviceNode节点
-		policy &#x3D; 2; &#x2F;&#x2F; policy字段是驱动服务发布的策略，在驱动服务管理章节有详细介绍
-        priority &#x3D; 10; &#x2F;&#x2F; 驱动启动优先级（0-200），值越大优先级越低，建议默认配100，优先级相同则不保证device的加载顺序
-        preload &#x3D; 1; &#x2F;&#x2F; 驱动按需加载字段
-        permission &#x3D; 0777; &#x2F;&#x2F; 驱动创建设备节点权限
-        moduleName &#x3D; &quot;HDF_LED&quot;; &#x2F;&#x2F; 驱动名称，该字段的值必须和驱动入口结构的moduleName值一致
-        serviceName &#x3D; &quot;hdf_led&quot;; &#x2F;&#x2F; 驱动对外发布服务的名称，必须唯一
-        deviceMatchAttr &#x3D; &quot;st_stm32mp157_led&quot;; &#x2F;&#x2F;驱动私有数据匹配的关键字，必须和驱动私有数据配置表中的match_attr值相等
-    &#125;
-&#125; <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="五、编译烧录"><a href="#五、编译烧录" class="headerlink" title="五、编译烧录"></a>五、编译烧录</h2><p>参考之前文章<a href="%5B%E3%80%90FFH%E3%80%91Linux%E4%B8%8B%E9%85%8D%E7%BD%AE%E5%B0%8F%E7%86%8A%E6%B4%BE-%E9%B8%BF%E8%92%99%C2%B7%E5%8F%94%E8%AE%BE%E5%A4%87%E5%BC%80%E5%8F%91%EF%BC%88%E5%8D%97%E5%90%91%EF%BC%89%E7%9A%84%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-%E9%B8%BF%E8%92%99HarmonyOS%E6%8A%80%E6%9C%AF%E7%A4%BE%E5%8C%BA-%E9%B8%BF%E8%92%99%E5%AE%98%E6%96%B9%E5%90%88%E4%BD%9C%E4%BC%99%E4%BC%B4-51CTO.COM%5D(https://harmonyos.51cto.com/posts/10283)">Linux下配置小熊派-鸿蒙·叔设备开发（南向）的开发环境</a></p>
+<h2 id="六、运行"><a href="#六、运行" class="headerlink" title="六、运行"></a>六、运行</h2><p>串口连接小熊派终端</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">./bin/my_led <span class="token number">0</span> <span class="token comment">#关闭LED</span>
+./bin/my_led <span class="token number">1</span> <span class="token comment">#开启LED</span>
+./bin/my_led <span class="token number">2</span> <span class="token comment">#翻转LED</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
-<p>如图所示</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E8%AE%BE%E5%A4%87%E6%8F%8F%E8%BF%B0%E6%BA%90%E7%A0%81.png" alt="设备描述源码"></p>
-<ul>
-<li>moduleName要与led.c中的**.moduleName = “HDF_LED”**参数一致</li>
-<li>serviceName要与led_config.hcs中的**match_attr = “st_stm32mp157_led”**参数一致</li>
-</ul>
-<h3 id="3-4-将写好的驱动添加到板级配置入口"><a href="#3-4-将写好的驱动添加到板级配置入口" class="headerlink" title="3.4 将写好的驱动添加到板级配置入口"></a>3.4 将写好的驱动添加到板级配置入口</h3><p>在在device\st\bearpi_hm_micro\liteos_a\hdf_config\hdf.hcs文件中添加如下代码</p>
-<pre class="line-numbers language-C" data-language="C"><code class="language-C">#include &quot;led&#x2F;led_config.hcs&quot;	<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-
-
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E5%B0%86%E8%AF%A5%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E6%9D%BF%E7%BA%A7%E9%85%8D%E7%BD%AE%E5%85%A5%E5%8F%A3%E6%96%87%E4%BB%B6.png" alt="将该配置文件添加到板级配置入口文件"></p>
-<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>到此为止，以LED驱动开发的流程到此结束</p>
 
                 
             </div>
@@ -679,7 +682,7 @@ HDF_INIT(g_ledDriverEntry);
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://www.wait-aurora.cn/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">http://www.wait-aurora.cn/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/</a>
+                    <a href="http://www.wait-aurora.cn/2022/02/12/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B/">http://www.wait-aurora.cn/2022/02/12/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -782,24 +785,24 @@ HDF_INIT(g_ledDriverEntry);
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
+                <a href="/2022/02/16/%E5%B0%8F%E7%86%8A%E6%B4%BE%E6%B7%BB%E5%8A%A0JS-API%E6%8E%A5%E5%8F%A3/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="小熊派纯代码开发流程">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="小熊派添加JS API接口">
                         
-                        <span class="card-title">小熊派纯代码开发流程</span>
+                        <span class="card-title">小熊派添加JS API接口</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本篇文章将讲解如何在小熊派上进行驱动开发.
+                            本篇文章将讲解如何在小熊派上自定义JS API.
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-02-09
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-02-16
                         </span>
                         <span class="publish-author">
                             
@@ -843,31 +846,31 @@ HDF_INIT(g_ledDriverEntry);
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/01/22/%E5%BD%93%E4%BD%A0%E7%BF%BB%E5%88%B0%E4%B8%80%E4%B8%AA%E6%A0%91%E8%8E%93%E6%B4%BE%E5%B0%8F%E8%BD%A6%E6%97%B6%E6%80%8E%E4%B9%88%E4%B8%8B%E6%89%8B/">
+                <a href="/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="当你翻到一个树莓派小车时怎么下手">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="小熊派纯代码开发流程">
                         
-                        <span class="card-title">当你翻到一个树莓派小车时怎么下手</span>
+                        <span class="card-title">小熊派纯代码开发流程</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            从杂物堆里翻出一个树莓派怎么办
+                            本篇文章将讲解如何在小熊派上进行驱动开发.
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-01-22
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-02-09
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Linux%E7%B3%BB%E7%BB%9F/" class="post-category">
-                                    Linux系统
+                            <a href="/categories/%E9%B8%BF%E8%92%99%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" class="post-category">
+                                    鸿蒙嵌入式开发
                                 </a>
                             
                             
@@ -877,8 +880,20 @@ HDF_INIT(g_ledDriverEntry);
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/">
-                        <span class="chip bg-color">树莓派</span>
+                    <a href="/tags/BearPi/">
+                        <span class="chip bg-color">BearPi</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
+                        <span class="chip bg-color">开源鸿蒙</span>
+                    </a>
+                    
+                    <a href="/tags/OpenHarmony/">
+                        <span class="chip bg-color">OpenHarmony</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%B0%8F%E7%86%8A%E6%B4%BE/">
+                        <span class="chip bg-color">小熊派</span>
                     </a>
                     
                 </div>

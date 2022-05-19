@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="小熊派驱动开发流程, Wait Aurora">
-    <meta name="description" content="本篇文章将讲解如何在小熊派上进行驱动开发.">
+    <meta name="keywords" content="小熊派添加JS API接口, Wait Aurora">
+    <meta name="description" content="本篇文章将讲解如何在小熊派上自定义JS API.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +19,7 @@
 
     
 
-    <title>小熊派驱动开发流程 | Wait Aurora</title>
+    <title>小熊派添加JS API接口 | Wait Aurora</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -246,12 +246,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">小熊派驱动开发流程</h1>
+                    <h1 class="description center-align post-title">小熊派添加JS API接口</h1>
                 </div>
             </div>
         </div>
@@ -404,7 +404,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-02-06
+                    2022-02-16
                 </div>
                 
 
@@ -428,231 +428,140 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="小熊派驱动开发流程（以点亮LED灯为例）"><a href="#小熊派驱动开发流程（以点亮LED灯为例）" class="headerlink" title="小熊派驱动开发流程（以点亮LED灯为例）"></a>小熊派驱动开发流程（以点亮LED灯为例）</h1><h2 id="一、流程总览"><a href="#一、流程总览" class="headerlink" title="一、流程总览"></a>一、流程总览</h2><p>创建驱动目录并添加<strong>驱动源码文件</strong>和<strong>编译脚本</strong>–&gt;添加驱动配置目录和<strong>驱动配置文件</strong></p>
-<h2 id="二、添加驱动文件"><a href="#二、添加驱动文件" class="headerlink" title="二、添加驱动文件"></a>二、添加驱动文件</h2><h3 id="2-1-创建驱动文件夹"><a href="#2-1-创建驱动文件夹" class="headerlink" title="2.1 创建驱动文件夹"></a>2.1 创建驱动文件夹</h3><p>在./device/st/drivers路径下新建一个led目录，用于存放驱动源码文件。</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E9%A9%B1%E5%8A%A8%E7%9B%AE%E5%BD%95.png" alt="驱动目录"></p>
-<h3 id="2-2-创建驱动源码文件"><a href="#2-2-创建驱动源码文件" class="headerlink" title="2.2 创建驱动源码文件"></a>2.2 创建驱动源码文件</h3><p>新建led.c文件，编写驱动源码</p>
-<pre class="line-numbers language-C" data-language="C"><code class="language-C">#include &quot;hdf_device_desc.h&quot; 
-#include &quot;hdf_log.h&quot;         
-#include &quot;device_resource_if.h&quot;
-#include &quot;osal_io.h&quot;
-#include &quot;osal.h&quot;
-#include &quot;osal_mem.h&quot;
-#include &quot;gpio_if.h&quot;
-
-#define HDF_LOG_TAG led_driver &#x2F;&#x2F; 打印日志所包含的标签，如果不定义则用默认定义的HDF_TAG标签
-#define LED_WRITE_READ 1       &#x2F;&#x2F; 读写操作码1
-
-enum LedOps &#123;
-    LED_OFF,
-    LED_ON,  
-    LED_TOGGLE,
-&#125;;
-
-struct Stm32Mp1ILed &#123;
-    uint32_t gpioNum;
-&#125;;
-static struct Stm32Mp1ILed g_Stm32Mp1ILed;
-uint8_t status &#x3D; 0;
-&#x2F;&#x2F; Dispatch是用来处理用户态发下来的消息
-int32_t LedDriverDispatch(struct HdfDeviceIoClient *client, int cmdCode, struct HdfSBuf *data, struct HdfSBuf *reply)
-&#123;
-    uint8_t contrl;
-    HDF_LOGE(&quot;Led driver dispatch&quot;);
-    if (client &#x3D;&#x3D; NULL || client-&gt;device &#x3D;&#x3D; NULL)
-    &#123;
-        HDF_LOGE(&quot;Led driver device is NULL&quot;);
-        return HDF_ERR_INVALID_OBJECT;
-    &#125;
-
-    switch (cmdCode)
-    &#123;
-    &#x2F;* 接收到用户态发来的LED_WRITE_READ命令 *&#x2F;
-    case LED_WRITE_READ:
-        &#x2F;* 读取data里的数据，赋值给contrl *&#x2F;
-        HdfSbufReadUint8(data,&amp;contrl);                  
-        switch (contrl)
-        &#123;
-        &#x2F;* 开灯 *&#x2F;
-        case LED_ON:                                            
-            GpioWrite(g_Stm32Mp1ILed.gpioNum, GPIO_VAL_LOW);
-            status &#x3D; 1;
-            break;
-        &#x2F;* 关灯 *&#x2F;
-        case LED_OFF:                                           
-            GpioWrite(g_Stm32Mp1ILed.gpioNum, GPIO_VAL_HIGH);
-            status &#x3D; 0;
-            break;
-        &#x2F;* 状态翻转 *&#x2F;
-        case LED_TOGGLE:
-            if(status &#x3D;&#x3D; 0)
-            &#123;
-                GpioWrite(g_Stm32Mp1ILed.gpioNum, GPIO_VAL_LOW);
-                status &#x3D; 1;
-            &#125;
-            else
-            &#123;
-                GpioWrite(g_Stm32Mp1ILed.gpioNum, GPIO_VAL_HIGH);
-                status &#x3D; 0;
-            &#125;                                        
-            break;
-        default:
-            break;
-        &#125;
-        &#x2F;* 把LED的状态值写入reply, 可被带至用户程序 *&#x2F;
-        if (!HdfSbufWriteInt32(reply, status))                
-        &#123;
-            HDF_LOGE(&quot;replay is fail&quot;);
-            return HDF_FAILURE;
-        &#125;
-        break;
-    default:
-        break;
-    &#125;
-    return HDF_SUCCESS;
-&#125;
-
-&#x2F;&#x2F; 读取驱动私有配置
-static int32_t Stm32LedReadDrs(struct Stm32Mp1ILed *led, const struct DeviceResourceNode *node)
-&#123;
-    int32_t ret;
-    struct DeviceResourceIface *drsOps &#x3D; NULL;
-
-    drsOps &#x3D; DeviceResourceGetIfaceInstance(HDF_CONFIG_SOURCE);
-    if (drsOps &#x3D;&#x3D; NULL || drsOps-&gt;GetUint32 &#x3D;&#x3D; NULL) &#123;
-        HDF_LOGE(&quot;%s: invalid drs ops!&quot;, __func__);
-        return HDF_FAILURE;
-    &#125;
-    &#x2F;* 读取led.hcs里面led_gpio_num的值 *&#x2F;
-    ret &#x3D; drsOps-&gt;GetUint32(node, &quot;led_gpio_num&quot;, &amp;led-&gt;gpioNum, 0); 
-    if (ret !&#x3D; HDF_SUCCESS) &#123;
-        HDF_LOGE(&quot;%s: read led gpio num fail!&quot;, __func__);
-        return ret;
-    &#125;
-    return HDF_SUCCESS;
-&#125;
-
-&#x2F;&#x2F;驱动对外提供的服务能力，将相关的服务接口绑定到HDF框架
-int32_t HdfLedDriverBind(struct HdfDeviceObject *deviceObject)
-&#123;
-    if (deviceObject &#x3D;&#x3D; NULL)
-    &#123;
-        HDF_LOGE(&quot;Led driver bind failed!&quot;);
-        return HDF_ERR_INVALID_OBJECT;
-    &#125;
-    static struct IDeviceIoService ledDriver &#x3D; &#123;
-        .Dispatch &#x3D; LedDriverDispatch,
-    &#125;;
-    deviceObject-&gt;service &#x3D; (struct IDeviceIoService *)(&amp;ledDriver);
-    HDF_LOGD(&quot;Led driver bind success&quot;);
-    return HDF_SUCCESS;
-&#125;
-
-&#x2F;&#x2F; 驱动自身业务初始的接口
-int32_t HdfLedDriverInit(struct HdfDeviceObject *device)
-&#123;
-    struct Stm32Mp1ILed *led &#x3D; &amp;g_Stm32Mp1ILed;
-    int32_t ret;
-
-    if (device &#x3D;&#x3D; NULL || device-&gt;property &#x3D;&#x3D; NULL) &#123;
-        HDF_LOGE(&quot;%s: device or property NULL!&quot;, __func__);
-        return HDF_ERR_INVALID_OBJECT;
-    &#125;
-    &#x2F;* 读取hcs私有属性值 *&#x2F;
-    ret &#x3D; Stm32LedReadDrs(led, device-&gt;property);
-    if (ret !&#x3D; HDF_SUCCESS) &#123;
-        HDF_LOGE(&quot;%s: get led device resource fail:%d&quot;, __func__, ret);
-        return ret;
-    &#125;
-    &#x2F;* 将GPIO管脚配置为输出 *&#x2F;
-    ret &#x3D; GpioSetDir(led-&gt;gpioNum, GPIO_DIR_OUT);
-    if (ret !&#x3D; 0)
-    &#123;
-        HDF_LOGE(&quot;GpioSerDir: failed, ret %d\n&quot;, ret);
-        return ret;
-    &#125;
-    HDF_LOGD(&quot;Led driver Init success&quot;);
-    return HDF_SUCCESS;
-&#125;
-
-&#x2F;&#x2F; 驱动资源释放的接口
-void HdfLedDriverRelease(struct HdfDeviceObject *deviceObject)
-&#123;
-    if (deviceObject &#x3D;&#x3D; NULL)
-    &#123;
-        HDF_LOGE(&quot;Led driver release failed!&quot;);
-        return;
-    &#125;
-    HDF_LOGD(&quot;Led driver release success&quot;);
-    return;
-&#125;
-
-&#x2F;&#x2F; 定义驱动入口的对象，必须为HdfDriverEntry（在hdf_device_desc.h中定义）类型的全局变量
-struct HdfDriverEntry g_ledDriverEntry &#x3D; &#123;
-    .moduleVersion &#x3D; 1,
-    .moduleName &#x3D; &quot;HDF_LED&quot;,
-    .Bind &#x3D; HdfLedDriverBind,
-    .Init &#x3D; HdfLedDriverInit,
-    .Release &#x3D; HdfLedDriverRelease,
-&#125;;
-
-&#x2F;&#x2F; 调用HDF_INIT将驱动入口注册到HDF框架中
-HDF_INIT(g_ledDriverEntry);
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="2-3-创建编译脚本文件"><a href="#2-3-创建编译脚本文件" class="headerlink" title="2.3 创建编译脚本文件"></a>2.3 创建编译脚本文件</h3><p>新建BUILD.gn文件，添加以下内容</p>
-<pre class="line-numbers language-cmake" data-language="cmake"><code class="language-cmake"><span class="token function">import</span><span class="token punctuation">(</span><span class="token string">"//drivers/adapter/khdf/liteos/hdf.gni"</span><span class="token punctuation">)</span>
-
-<span class="token function">hdf_driver</span><span class="token punctuation">(</span><span class="token string">"hdf_led"</span><span class="token punctuation">)</span> &#123;
-    sources = [
-    <span class="token string">"led.c"</span>,
-    ]
-<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="2-4-修改drivers的编译脚本使之编译进内核"><a href="#2-4-修改drivers的编译脚本使之编译进内核" class="headerlink" title="2.4 修改drivers的编译脚本使之编译进内核"></a>2.4 修改drivers的编译脚本使之编译进内核</h3><p>在/device/st/drivers/BUILD.gn的deps中加入”led”</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E7%BC%96%E8%AF%91%E8%BF%9B%E5%86%85%E6%A0%B8.png" alt="编译进内核"></p>
-<h2 id="三、添加驱动配置文件"><a href="#三、添加驱动配置文件" class="headerlink" title="三、添加驱动配置文件"></a>三、添加驱动配置文件</h2><p>驱动配置包含两部分，HDF框架定义的<strong>驱动的私有配置信息</strong>和<strong>驱动设备描述</strong></p>
-<h3 id="3-1-创建驱动配置文件夹"><a href="#3-1-创建驱动配置文件夹" class="headerlink" title="3.1 创建驱动配置文件夹"></a>3.1 创建驱动配置文件夹</h3><p>在./device/st/bearpi_hm_micro/liteos_a/hdf_config路径下新建一个led目录，用于存放led驱动配置文件。</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E9%A9%B1%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9B%AE%E5%BD%95.png" alt="驱动配置目录"></p>
-<h3 id="3-2-创建驱动私有配置文件"><a href="#3-2-创建驱动私有配置文件" class="headerlink" title="3.2 创建驱动私有配置文件"></a>3.2 创建驱动私有配置文件</h3><p>在led文件夹下创建led_config.hcs文件，该文件为驱动配置文件。</p>
-<p>添加以下内容</p>
-<pre class="line-numbers language-none"><code class="language-none">root &#123;
-    LedDriverConfig &#123;
-        led_gpio_num &#x3D; 13;
-        match_attr &#x3D; &quot;st_stm32mp157_led&quot;; &#x2F;&#x2F;该字段的值必须和device_info.hcs中的deviceMatchAttr值一致
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-<h3 id="3-3-添加驱动设备描述"><a href="#3-3-添加驱动设备描述" class="headerlink" title="3.3 添加驱动设备描述"></a>3.3 添加驱动设备描述</h3><p>在device\st\bearpi_hm_micro\liteos_a\hdf_config\device_info\device_info.hcs文件中添加以下代码</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">device_led :: device &#123; &#x2F;&#x2F; led设备节点
-	device0 :: deviceNode &#123; &#x2F;&#x2F; led驱动的DeviceNode节点
-		policy &#x3D; 2; &#x2F;&#x2F; policy字段是驱动服务发布的策略，在驱动服务管理章节有详细介绍
-        priority &#x3D; 10; &#x2F;&#x2F; 驱动启动优先级（0-200），值越大优先级越低，建议默认配100，优先级相同则不保证device的加载顺序
-        preload &#x3D; 1; &#x2F;&#x2F; 驱动按需加载字段
-        permission &#x3D; 0777; &#x2F;&#x2F; 驱动创建设备节点权限
-        moduleName &#x3D; &quot;HDF_LED&quot;; &#x2F;&#x2F; 驱动名称，该字段的值必须和驱动入口结构的moduleName值一致
-        serviceName &#x3D; &quot;hdf_led&quot;; &#x2F;&#x2F; 驱动对外发布服务的名称，必须唯一
-        deviceMatchAttr &#x3D; &quot;st_stm32mp157_led&quot;; &#x2F;&#x2F;驱动私有数据匹配的关键字，必须和驱动私有数据配置表中的match_attr值相等
-    &#125;
-&#125; <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+                <h1 id="小熊派添加自定义JS-API接口流程（以点亮LED为例）"><a href="#小熊派添加自定义JS-API接口流程（以点亮LED为例）" class="headerlink" title="小熊派添加自定义JS API接口流程（以点亮LED为例）"></a>小熊派添加自定义JS API接口流程（以点亮LED为例）</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>之前我们开发了小熊派的LED灯驱动，并且编写了相应的代码调用自己的开发驱动，但是自己写的代码只能在终端以命令的形式调用，显然这样十分的不太友好。假设小熊派是我们的一个智能设备，这个LED是我们的手电筒，通过命令行的形式打开手电筒肯定不是我们所期待的，我们更希望能够在图像界面上点一个按钮从而打开我们的手电筒，而目前OpenHarmony大多数采用JS开发应用，如果我们想要在图形界面上打开我们的手电筒，就需要自己定义一个JS的API接口来调用我们的LED。本文便介绍了如何自定义JS API从而调用自己开发的驱动。</p>
+<h2 id="二、流程总览"><a href="#二、流程总览" class="headerlink" title="二、流程总览"></a>二、流程总览</h2><p>添加JS API接口–&gt;编写接口代码–&gt;配置HDF头文件路径–&gt;添加编译依赖</p>
+<h2 id="三、添加JS-API接口"><a href="#三、添加JS-API接口" class="headerlink" title="三、添加JS API接口"></a>三、添加JS API接口</h2><p>打开文件foundation\ace\ace_engine_lite\frameworks\src\core\modules\app_module.h，在32行处添加如下代码</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">static</span> JSIValue <span class="token function">ToggleLed</span><span class="token punctuation">(</span><span class="token keyword">const</span> JSIValue thisVal<span class="token punctuation">,</span> <span class="token keyword">const</span> JSIValue<span class="token operator">*</span> args<span class="token punctuation">,</span> <span class="token class-name">uint8_t</span> argsNum<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 <p>如图所示</p>
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E8%AE%BE%E5%A4%87%E6%8F%8F%E8%BF%B0%E6%BA%90%E7%A0%81.png" alt="设备描述源码"></p>
-<ul>
-<li>moduleName要与led.c中的**.moduleName = “HDF_LED”**参数一致</li>
-<li>serviceName要与led_config.hcs中的**match_attr = “st_stm32mp157_led”**参数一致</li>
-</ul>
-<h3 id="3-4-将写好的驱动添加到板级配置入口"><a href="#3-4-将写好的驱动添加到板级配置入口" class="headerlink" title="3.4 将写好的驱动添加到板级配置入口"></a>3.4 将写好的驱动添加到板级配置入口</h3><p>在在device\st\bearpi_hm_micro\liteos_a\hdf_config\hdf.hcs文件中添加如下代码</p>
-<pre class="line-numbers language-C" data-language="C"><code class="language-C">#include &quot;led&#x2F;led_config.hcs&quot;	<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src="/2022/02/16/%E5%B0%8F%E7%86%8A%E6%B4%BE%E6%B7%BB%E5%8A%A0JS-API%E6%8E%A5%E5%8F%A3/%E6%B7%BB%E5%8A%A0API%E6%8E%A5%E5%8F%A31.png"></p>
+<p>在65行处添加如下代码</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">JSI::SetModuleAPI(exports, &quot;ledcontrol&quot;, AppModule::ToggleLed);<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
+<p>![](C:\Users\33124\Desktop\博客素材\小熊派开发JS API\添加API接口2.png)</p>
+<h2 id="四、编写对应的驱动代码"><a href="#四、编写对应的驱动代码" class="headerlink" title="四、编写对应的驱动代码"></a>四、编写对应的驱动代码</h2><p>打开foundation\ace\ace_engine_lite\frameworks\src\core\modules\app_module.cpp文件，需要在两个位置添加我们自己API的代码</p>
+<h3 id="4-1添加头文件"><a href="#4-1添加头文件" class="headerlink" title="4.1添加头文件"></a>4.1添加头文件</h3><p>在头文件导入处添加如下头文件</p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &quot;hdf_sbuf.h&quot;
+#include &quot;hdf_io_service_if.h&quot;
 
+#define LED_WRITE_READ 1
+#define LED_SERVICE &quot;hdf_led&quot;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p><img src="/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E5%B0%86%E8%AF%A5%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%B7%BB%E5%8A%A0%E5%88%B0%E6%9D%BF%E7%BA%A7%E9%85%8D%E7%BD%AE%E5%85%A5%E5%8F%A3%E6%96%87%E4%BB%B6.png" alt="将该配置文件添加到板级配置入口文件"></p>
-<h2 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h2><p>到此为止，以LED驱动开发的流程到此结束</p>
+<p>如图所示</p>
+<p><img src="/2022/02/16/%E5%B0%8F%E7%86%8A%E6%B4%BE%E6%B7%BB%E5%8A%A0JS-API%E6%8E%A5%E5%8F%A3/%E5%A4%B4%E6%96%87%E4%BB%B6.png"></p>
+<h3 id="4-2添加API的代码"><a href="#4-2添加API的代码" class="headerlink" title="4.2添加API的代码"></a>4.2添加API的代码</h3><p>在适当位置加入以下代码，建议在<strong>JSIValue AppModule::GetInfo</strong>函数之前</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">static int OnDevEventReceived(void *priv, uint32_t id, struct HdfSBuf *data)
+&#123;
+    uint32_t value;
+    HdfSbufReadUint32(data, &amp;value);
+    HILOG_ERROR(HILOG_MODULE_ACE,&quot;%s: dev event received: %u %u\n&quot;, (char *)priv, id, value);
+
+    return HDF_SUCCESS;
+&#125;
+
+static int GpioWriteRead(struct HdfIoService *serv, int32_t eventData, int32_t *val)
+&#123;
+    int ret &#x3D; HDF_FAILURE;
+    struct HdfSBuf *data &#x3D; HdfSBufObtainDefaultSize();
+    struct HdfSBuf *reply &#x3D; HdfSBufObtainDefaultSize();
+
+    if (data &#x3D;&#x3D; NULL || reply &#x3D;&#x3D; NULL) &#123;
+        HILOG_ERROR(HILOG_MODULE_ACE,&quot;fail to obtain sbuf data\n&quot;);
+        return ret;
+    &#125;
+
+    if (!HdfSbufWriteUint8(data, (uint8_t)eventData))
+    &#123;
+        HILOG_ERROR(HILOG_MODULE_ACE,&quot;fail to write sbuf\n&quot;);
+        HdfSBufRecycle(data);
+        HdfSBufRecycle(reply);
+        return ret;
+    &#125;
+
+    ret &#x3D; serv-&gt;dispatcher-&gt;Dispatch(&amp;serv-&gt;object, LED_WRITE_READ, data, reply);
+    if (ret !&#x3D; HDF_SUCCESS)
+    &#123;
+        HILOG_ERROR(HILOG_MODULE_ACE,&quot;fail to send service call\n&quot;);
+        HdfSBufRecycle(data);
+        HdfSBufRecycle(reply);
+        return ret;
+    &#125;
+    if (!HdfSbufReadInt32(reply, val))
+    &#123;
+        HILOG_ERROR(HILOG_MODULE_ACE,&quot;fail to get service call reply\n&quot;);
+        ret &#x3D; HDF_ERR_INVALID_OBJECT;
+        HdfSBufRecycle(data);
+        HdfSBufRecycle(reply);
+        return ret;
+    &#125;
+    HILOG_ERROR(HILOG_MODULE_ACE,&quot;Get reply is: %d\n&quot;, val);
+
+    HdfSBufRecycle(data);
+    HdfSBufRecycle(reply);
+    return ret;
+&#125;
+
+JSIValue AppModule::ToggleLed(const JSIValue thisVal, const JSIValue *args, uint8_t argsNum)
+&#123;
+    HILOG_ERROR(HILOG_MODULE_ACE, &quot;led button pressed.&quot;);
+
+    struct HdfIoService *serv &#x3D; HdfIoServiceBind(LED_SERVICE);
+    if (serv &#x3D;&#x3D; NULL)
+    &#123;
+        HILOG_ERROR(HILOG_MODULE_ACE,&quot;fail to get service2 %s\n&quot;, LED_SERVICE);
+        return JSI::CreateUndefined();
+    &#125;
+
+    if ((args &#x3D;&#x3D; nullptr) || (argsNum &#x3D;&#x3D; 0) || (JSI::ValueIsUndefined(args[0]))) &#123;
+        return JSI::CreateUndefined();
+    &#125;
+
+    JSIValue success &#x3D; JSI::GetNamedProperty(args[0], CB_SUCCESS);
+    JSIValue fail &#x3D; JSI::GetNamedProperty(args[0], CB_FAIL);
+    JSIValue complete &#x3D; JSI::GetNamedProperty(args[0], CB_COMPLETE);
+
+    int32_t num &#x3D; (int32_t)JSI::GetNumberProperty(args[0], &quot;code&quot;);
+
+    int32_t replyData &#x3D; 0;
+
+    if (GpioWriteRead(serv, num, &amp;replyData))
+    &#123;
+        HILOG_ERROR(HILOG_MODULE_ACE,&quot;fail to send event\n&quot;);
+        JSI::CallFunction(fail, thisVal, nullptr, 0);
+        JSI::CallFunction(complete, thisVal, nullptr, 0);
+        JSI::ReleaseValueList(success, fail, complete);
+        return JSI::CreateUndefined();
+    &#125;
+
+    JSIValue result &#x3D; JSI::CreateObject();
+    JSI::SetNumberProperty(result, &quot;led_status&quot;, replyData);
+
+    JSIValue argv[ARGC_ONE] &#x3D; &#123;result&#125;;
+    JSI::CallFunction(success, thisVal, argv, ARGC_ONE);
+    JSI::CallFunction(complete, thisVal, nullptr, 0);
+    JSI::ReleaseValueList(success, fail, complete, result);
+
+    HdfIoServiceRecycle(serv);
+
+    return JSI::CreateUndefined();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>代码推荐添加位置如图所示</p>
+<p><img src="/2022/02/16/%E5%B0%8F%E7%86%8A%E6%B4%BE%E6%B7%BB%E5%8A%A0JS-API%E6%8E%A5%E5%8F%A3/%E4%BB%A3%E7%A0%81%E6%B7%BB%E5%8A%A0%E4%BD%8D%E7%BD%AE.png"></p>
+<h3 id="五、配置HDF头文件路径"><a href="#五、配置HDF头文件路径" class="headerlink" title="五、配置HDF头文件路径"></a>五、配置HDF头文件路径</h3><p>打开foundation\ace\ace_engine_lite\ace_lite.gni文件，在大约80行处添加如下配置</p>
+<pre class="line-numbers language-camke" data-language="camke"><code class="language-camke">ace_lite_include_dirs +&#x3D; [
+    &quot;&#x2F;&#x2F;drivers&#x2F;framework&#x2F;ability&#x2F;sbuf&#x2F;include&quot;,
+    &quot;&#x2F;&#x2F;drivers&#x2F;framework&#x2F;include&#x2F;core&quot;,
+    &quot;&#x2F;&#x2F;drivers&#x2F;framework&#x2F;include&#x2F;utils&quot;,
+    &quot;&#x2F;&#x2F;drivers&#x2F;adapter&#x2F;uhdf&#x2F;posix&#x2F;include&quot;,
+]<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/2022/02/16/%E5%B0%8F%E7%86%8A%E6%B4%BE%E6%B7%BB%E5%8A%A0JS-API%E6%8E%A5%E5%8F%A3/HDF%E9%85%8D%E7%BD%AE.png"></p>
+<h2 id="六、添加编译依赖"><a href="#六、添加编译依赖" class="headerlink" title="六、添加编译依赖"></a>六、添加编译依赖</h2><p>打开<code>foundation\ace\ace_engine_lite\frameworks\BUILD.gn</code>，在<code>public_deps</code>中添加以下代码</p>
+<pre class="line-numbers language-C" data-language="C"><code class="language-C">&quot;&#x2F;&#x2F;drivers&#x2F;adapter&#x2F;uhdf&#x2F;manager:hdf_core&quot;,<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>打开<code>foundation\ace\ace_engine_lite\test\ace_test_config.gni</code>，在<code>extra_deps</code>中添加以下代码</p>
+<pre class="line-numbers language-none"><code class="language-none">&quot;&#x2F;&#x2F;drivers&#x2F;adapter&#x2F;uhdf&#x2F;manager:hdf_core&quot;,<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
                 
             </div>
@@ -679,7 +588,7 @@ HDF_INIT(g_ledDriverEntry);
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://www.wait-aurora.cn/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">http://www.wait-aurora.cn/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/</a>
+                    <a href="http://www.wait-aurora.cn/2022/02/16/%E5%B0%8F%E7%86%8A%E6%B4%BE%E6%B7%BB%E5%8A%A0JS-API%E6%8E%A5%E5%8F%A3/">http://www.wait-aurora.cn/2022/02/16/%E5%B0%8F%E7%86%8A%E6%B4%BE%E6%B7%BB%E5%8A%A0JS-API%E6%8E%A5%E5%8F%A3/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -782,13 +691,66 @@ HDF_INIT(g_ledDriverEntry);
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
+                <a href="/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="小熊派纯代码开发流程">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="安装Ubuntu到移动介质">
                         
-                        <span class="card-title">小熊派纯代码开发流程</span>
+                        <span class="card-title">安装Ubuntu到移动介质</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            将Ubuntu系统安装到移动介质上实现即插即用。
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-02-17
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Linux%E7%B3%BB%E7%BB%9F/" class="post-category">
+                                    Linux系统
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
+                    </a>
+                    
+                    <a href="/tags/Ubuntu/">
+                        <span class="chip bg-color">Ubuntu</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2022/02/12/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E8%B0%83%E7%94%A8%E6%B5%81%E7%A8%8B/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="小熊派驱动调用流程">
+                        
+                        <span class="card-title">小熊派驱动调用流程</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -798,9 +760,9 @@ HDF_INIT(g_ledDriverEntry);
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-02-09
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-02-12
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -830,55 +792,6 @@ HDF_INIT(g_ledDriverEntry);
                     
                     <a href="/tags/%E5%B0%8F%E7%86%8A%E6%B4%BE/">
                         <span class="chip bg-color">小熊派</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2022/01/22/%E5%BD%93%E4%BD%A0%E7%BF%BB%E5%88%B0%E4%B8%80%E4%B8%AA%E6%A0%91%E8%8E%93%E6%B4%BE%E5%B0%8F%E8%BD%A6%E6%97%B6%E6%80%8E%E4%B9%88%E4%B8%8B%E6%89%8B/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="当你翻到一个树莓派小车时怎么下手">
-                        
-                        <span class="card-title">当你翻到一个树莓派小车时怎么下手</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            从杂物堆里翻出一个树莓派怎么办
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-01-22
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/Linux%E7%B3%BB%E7%BB%9F/" class="post-category">
-                                    Linux系统
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E6%A0%91%E8%8E%93%E6%B4%BE/">
-                        <span class="chip bg-color">树莓派</span>
                     </a>
                     
                 </div>
