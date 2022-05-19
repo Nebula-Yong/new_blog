@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="安装Ubuntu到移动介质, Wait Aurora">
-    <meta name="description" content="将Ubuntu系统安装到移动介质上实现即插即用。">
+    <meta name="keywords" content="小熊派纯代码开发流程, Wait Aurora">
+    <meta name="description" content="本篇文章将讲解如何在小熊派上进行驱动开发.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +19,7 @@
 
     
 
-    <title>安装Ubuntu到移动介质 | Wait Aurora</title>
+    <title>小熊派纯代码开发流程 | Wait Aurora</title>
     <link rel="icon" type="image/png" href="/new_blog/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/new_blog/libs/awesome/css/all.min.css">
@@ -246,12 +246,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/new_blog/medias/featureimages/7.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/new_blog/medias/featureimages/11.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">安装Ubuntu到移动介质</h1>
+                    <h1 class="description center-align post-title">小熊派纯代码开发流程</h1>
                 </div>
             </div>
         </div>
@@ -367,12 +367,20 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/new_blog/tags/Linux/">
-                                <span class="chip bg-color">Linux</span>
+                            <a href="/new_blog/tags/BearPi/">
+                                <span class="chip bg-color">BearPi</span>
                             </a>
                         
-                            <a href="/new_blog/tags/Ubuntu/">
-                                <span class="chip bg-color">Ubuntu</span>
+                            <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
+                                <span class="chip bg-color">开源鸿蒙</span>
+                            </a>
+                        
+                            <a href="/new_blog/tags/OpenHarmony/">
+                                <span class="chip bg-color">OpenHarmony</span>
+                            </a>
+                        
+                            <a href="/new_blog/tags/%E5%B0%8F%E7%86%8A%E6%B4%BE/">
+                                <span class="chip bg-color">小熊派</span>
                             </a>
                         
                     </div>
@@ -383,8 +391,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/new_blog/categories/Linux%E7%B3%BB%E7%BB%9F/" class="post-category">
-                                Linux系统
+                            <a href="/new_blog/categories/%E9%B8%BF%E8%92%99%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/" class="post-category">
+                                鸿蒙嵌入式开发
                             </a>
                         
                     </div>
@@ -396,7 +404,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-02-17
+                    2022-02-09
                 </div>
                 
 
@@ -420,37 +428,76 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="安装Ubuntu到移动介质并设置好UEFI引导"><a href="#安装Ubuntu到移动介质并设置好UEFI引导" class="headerlink" title="安装Ubuntu到移动介质并设置好UEFI引导"></a>安装Ubuntu到移动介质并设置好UEFI引导</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>鸿蒙的开发许多离不开Ubuntu系统的使用，其中OpenHarmony的镜像编译需要在Ubuntu系统下。大多数人会选择采用虚拟机下安装Ubuntu的方式，但是虚拟机本身对的磁盘占用大，以及在虚拟机内Ubuntu的性能受限导致编译时长过久。目前我们开发的只是L0和L1的设备，对电脑性能要求还不是很大，当要开发更高级别的设备，电脑性能就捉襟见肘了，而此时转移之前的工作显得不是那么的方便。本篇教程将介绍如何将Ubuntu安装到任何的<strong>移动介质</strong>中，这里的移动介质包过移动硬盘、U盘等存储设备，使之可以实现在任意电脑下即插即用（是不是可以很好的转移自己的工作）。本次安装需要准备以下工具：两个存储介质（一个作为启动盘，一个作为安装Ubuntu的系统盘）、一台支持UEFI启动的电脑</p>
-<h2 id="二、流程总览"><a href="#二、流程总览" class="headerlink" title="二、流程总览"></a>二、流程总览</h2><p>制作启动盘-&gt;修改系统启动顺序进入安装程序-&gt;安装Ubuntu到移动介质上-&gt;修复UEFI引导</p>
-<h2 id="三、制作启动盘"><a href="#三、制作启动盘" class="headerlink" title="三、制作启动盘"></a>三、制作启动盘</h2><p>下载[Rufus创建启动盘工具](<a target="_blank" rel="noopener" href="https://rufus.ie/zh/">Rufus - 轻松创建USB启动盘</a>)</p>
-<p>下载[Ubuntu镜像](<a target="_blank" rel="noopener" href="https://cn.ubuntu.com/download/desktop">下载Ubuntu桌面系统 | Ubuntu</a>)，这是20.03版本的，其余的可以在Ubuntu官网上找</p>
-<p>下载好后打开Rufus工具</p>
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/Rufus.png" alt="Rufus"></p>
-<p>前两项参数配置好后其他默认即可，点击开始开始安装。</p>
-<p><strong>这里提醒一下大家，建议用U盘作启动盘，将Ubuntu系统安装到移动硬盘上，移动移动硬盘最好使用固态硬盘。在移动固态硬盘上会有较好的体验</strong></p>
-<h2 id="四、修改启动顺序进入安装程序"><a href="#四、修改启动顺序进入安装程序" class="headerlink" title="四、修改启动顺序进入安装程序"></a>四、修改启动顺序进入安装程序</h2><p>首先大家需要知道自己的电脑启动选择项或者BIOS设置的快捷键是多少，如果不知道可以百度 &lt;电脑品牌&gt;启动选择项快捷键。关机重启后看到logo界面狂按快捷键进入引导选择后，选择自己制作的Ubuntu启动盘。有的电脑可能有fn键，如果开始失败没有进入引导选择界面的话可以尝试和fn键一起按。</p>
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/%E5%90%AF%E5%8A%A8%E9%80%89%E6%8B%A9%E9%A1%B9.jpg" alt="启动选择项"></p>
-<h2 id="五、安装到Ubuntu到移动介质上"><a href="#五、安装到Ubuntu到移动介质上" class="headerlink" title="五、安装到Ubuntu到移动介质上"></a>五、安装到Ubuntu到移动介质上</h2><p>在关机重启安装前，我们还需要进行一步检查，检查磁盘的类型是否为GPT类型（如果硬盘的大小小于2T就可以不用进行这一步操作）。我们需要下载[DiskGenius工具](<a target="_blank" rel="noopener" href="https://www.diskgenius.cn/">数据恢复软件,硬盘分区工具,系统备份软件 - DiskGenius官方网站</a>)</p>
-<p>打开开后点击自己要安装的磁盘，查看分区表类型是否为GPT格式</p>
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/%E6%A3%80%E6%9F%A5%E5%88%86%E5%8C%BA.png" alt="检查分区"></p>
-<p>如果不是就要右键改磁盘选择转为为GUID格式</p>
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/%E8%BD%AC%E5%8C%96%E4%B8%BAGPT.png" alt="转化为GPT"></p>
-<p>检查好后就可以关机重启安装了。</p>
-<h3 id="5-1磁盘分区"><a href="#5-1磁盘分区" class="headerlink" title="5.1磁盘分区"></a>5.1磁盘分区</h3><p>进入Ubuntu系统后，会自动打开一个安装程序，选择好语言后和键盘后建议不联网安装，会比较快一些。</p>
-<p>安装选择根据自己需求选择安装正常安装还是最小安装。</p>
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/%E5%AE%89%E8%A3%85%E9%80%89%E6%8B%A9.png" alt="安装选择"></p>
-<p><strong>在选择安装方式是选择其他选项</strong>，<strong>千万别手贱点删除整个磁盘!!!!</strong></p>
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/%E5%85%B6%E4%BB%96%E9%80%89%E9%A1%B9.png" alt="其他选项"></p>
-<p>接着会蹦出来一个分区界面，找到自己的那块要安装Ubuntu的磁盘，先按➖删除所有已经存在的分区，接着按➕先新添efi分区，大小100MB足够，实测只需要33MB。注意efi一定是要第一个分区。接着按➕先新添ext4类型的分区，挂载点为/，有的人会单独创一个分区来挂载/home，为了备份和数据安全，有需要的可以单独分区。还有的就是会创建Swap分区，我感觉创不创建区别不大，如果电脑的内存小可以创建一下，SWAP分区给2、4、8G都可以。efi和/是最基本的两个分区，其他根据需要创建。最后在安装启动引导器的设备选择efi分区点击安装即可。</p>
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/%E5%88%86%E5%8C%BA.png" alt="分区"></p>
-<h2 id="六、修复UEFI引导"><a href="#六、修复UEFI引导" class="headerlink" title="六、修复UEFI引导"></a>六、修复UEFI引导</h2><p>不知道是不是安装程序的BUG，会出现引导没有安装在移动介质的EFI分区，而是本机第一个硬盘的EFI分区。导致系统只能在本机启动而无法在其他电脑引导启动。为此我们在安装完系统后重启再次进入<strong>启动盘</strong>。连接互联网，按ctrl+alt+t打开命令行，输入以下两个命令下载打开引导修复工具</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> add-apt-repository ppa:yannubuntu/boot-repair <span class="token operator">&amp;&amp;</span> <span class="token function">sudo</span> <span class="token function">apt-get</span> update
+                <h1 id="小熊派纯代码开发流程"><a href="#小熊派纯代码开发流程" class="headerlink" title="小熊派纯代码开发流程"></a>小熊派纯代码开发流程</h1><h2 id="一、流程总览"><a href="#一、流程总览" class="headerlink" title="一、流程总览"></a>一、流程总览</h2><p>创建目录及相应源码文件–&gt;编写业务代码–&gt;编写编译构建文件BUILD.gn–&gt;编译烧录运行</p>
+<h2 id="二、源码目录结构"><a href="#二、源码目录结构" class="headerlink" title="二、源码目录结构"></a>二、源码目录结构</h2><p>在./applications/BearPi/BearPi-HM_Micro/samples/目录下创建</p>
+<p>project  源码目录</p>
+<p>*xxx.c  业务源码文件</p>
+<p>*BUILD.gn  业务源码的编译脚本</p>
+<h2 id="三、编写程序代码"><a href="#三、编写程序代码" class="headerlink" title="三、编写程序代码"></a>三、编写程序代码</h2><p>编写一个简单的C语言Hello world 程序</p>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">int</span> argc<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span><span class="token operator">*</span>argv<span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\n************************************************\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\n\t\tHello BearPi!\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\n************************************************\n\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> -y boot-repair
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
-<p><img src="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/boot.png" alt="boot"></p>
-<p>点击Recommand repair等待几分钟即可修复完毕</p>
+
+<h2 id="四、编写编译构建文件BUILD-gn"><a href="#四、编写编译构建文件BUILD-gn" class="headerlink" title="四、编写编译构建文件BUILD.gn"></a>四、编写编译构建文件BUILD.gn</h2><p>BUILD.gn文件是一种编译构建文件，类似于Cmake。相较于Cmake，当工程规模增大到难以想象的量级时，编译速度和工程模块的划分变得尤为重要，而gn便很好解决了这两个问题</p>
+<pre class="line-numbers language-cmake" data-language="cmake"><code class="language-cmake"><span class="token function">import</span><span class="token punctuation">(</span><span class="token string">"//build/lite/config/component/lite_component.gni"</span><span class="token punctuation">)</span> <span class="token comment">#导入 gni 组件</span>
+<span class="token comment"># 将源码hello_world.c编译成hello_world_lib库文件,同时输出的可执行文件名称由output_name定义为hello_world</span>
+<span class="token function">executable</span><span class="token punctuation">(</span><span class="token string">"hello_world_lib"</span><span class="token punctuation">)</span> &#123;
+    output_name = <span class="token string">"hello_world"</span>
+    sources = [ <span class="token string">"hello_world.c"</span> ]
+    include_dirs = []
+    defines = []
+    cflags_c = []
+    ldflags = []
+<span class="token punctuation">&#125;</span>
+<span class="token comment"># 将hello_world_lib打包成 lite_component，命名为my_app组件。</span>
+<span class="token function">lite_component</span><span class="token punctuation">(</span><span class="token string">"my_app"</span><span class="token punctuation">)</span> &#123;
+    features = [
+    	<span class="token string">":hello_world_lib"</span>,
+	]
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="五、添加“my-sample”组件"><a href="#五、添加“my-sample”组件" class="headerlink" title="五、添加“my_sample”组件"></a>五、添加“my_sample”组件</h2><h3 id="5-1添加组件my-sample的配置"><a href="#5-1添加组件my-sample的配置" class="headerlink" title="5.1添加组件my_sample的配置"></a>5.1添加组件my_sample的配置</h3><p>找到文件build/lite/components/applications.json</p>
+<p>添加以下内容</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span>
+    <span class="token property">"component"</span><span class="token operator">:</span> <span class="token string">"my_sample"</span><span class="token punctuation">,</span>
+    <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"my samples"</span><span class="token punctuation">,</span>
+    <span class="token property">"optional"</span><span class="token operator">:</span> <span class="token string">"true"</span><span class="token punctuation">,</span>
+    <span class="token property">"dirs"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">"applications/BearPi/BearPi-HM_Micro/samples/my_first_app"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"targets"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token string">"//applications/BearPi/BearPi-HM_Micro/samples/my_first_app:my_app"</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"rom"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+    <span class="token property">"ram"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+    <span class="token property">"output"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"adapted_kernel"</span><span class="token operator">:</span> <span class="token punctuation">[</span> <span class="token string">"liteos_a"</span> <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"features"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token property">"deps"</span><span class="token operator">:</span> <span class="token punctuation">&#123;</span>
+        <span class="token property">"components"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token property">"third_party"</span><span class="token operator">:</span> <span class="token punctuation">[</span> <span class="token punctuation">]</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如图所示</p>
+<p><img src="/new_blog/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E7%BB%84%E4%BB%B6%E9%85%8D%E7%BD%AE.png"></p>
+<h3 id="5-2新增my-sample组件的条目"><a href="#5-2新增my-sample组件的条目" class="headerlink" title="5.2新增my_sample组件的条目"></a>5.2新增my_sample组件的条目</h3><p>找到文件vendor/bearpi/bearpi_hm_micro/config.json</p>
+<p>在components出添加下面这句</p>
+<pre class="line-numbers language-json" data-language="json"><code class="language-json"><span class="token punctuation">&#123;</span> <span class="token property">"component"</span><span class="token operator">:</span> <span class="token string">"my_sample"</span><span class="token punctuation">,</span> <span class="token property">"features"</span><span class="token operator">:</span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token punctuation">&#125;</span><span class="token punctuation">,</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>如图所示</p>
+<p><img src="/new_blog/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/%E6%B7%BB%E5%8A%A0config.png" alt="添加config"></p>
+<h2 id="六、编译烧录"><a href="#六、编译烧录" class="headerlink" title="六、编译烧录"></a>六、编译烧录</h2><p>参考之前文章<a href="%5B%E3%80%90FFH%E3%80%91Linux%E4%B8%8B%E9%85%8D%E7%BD%AE%E5%B0%8F%E7%86%8A%E6%B4%BE-%E9%B8%BF%E8%92%99%C2%B7%E5%8F%94%E8%AE%BE%E5%A4%87%E5%BC%80%E5%8F%91%EF%BC%88%E5%8D%97%E5%90%91%EF%BC%89%E7%9A%84%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83-%E9%B8%BF%E8%92%99HarmonyOS%E6%8A%80%E6%9C%AF%E7%A4%BE%E5%8C%BA-%E9%B8%BF%E8%92%99%E5%AE%98%E6%96%B9%E5%90%88%E4%BD%9C%E4%BC%99%E4%BC%B4-51CTO.COM%5D(https://harmonyos.51cto.com/posts/10283)">Linux下配置小熊派-鸿蒙·叔设备开发（南向）的开发环境</a></p>
+<h2 id="七、运行"><a href="#七、运行" class="headerlink" title="七、运行"></a>七、运行</h2><p>串口连接小熊派终端，输入命令./bin/hello_world执行程序</p>
+<h2 id="六、流程回顾"><a href="#六、流程回顾" class="headerlink" title="六、流程回顾"></a>六、流程回顾</h2><p>系统的编译会从vendor/bearpi/bearpi_hm_micro/config.json文件开始编译“my_sample”这个组件，“my_sample”组件中的targets指向了BUILD.gn中的my_app，my_app中的feature指向了hello_world_lib，最终指向我们编写的hello_world.c源文件。</p>
 
                 
             </div>
@@ -477,7 +524,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://nebula-yong.github.io/new_blog/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/">https://nebula-yong.github.io/new_blog/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/</a>
+                    <a href="https://nebula-yong.github.io/new_blog/new_blog/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">https://nebula-yong.github.io/new_blog/new_blog/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -515,12 +562,20 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/new_blog/tags/Linux/">
-                                    <span class="chip bg-color">Linux</span>
+                                <a href="/new_blog/tags/BearPi/">
+                                    <span class="chip bg-color">BearPi</span>
                                 </a>
                             
-                                <a href="/new_blog/tags/Ubuntu/">
-                                    <span class="chip bg-color">Ubuntu</span>
+                                <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
+                                    <span class="chip bg-color">开源鸿蒙</span>
+                                </a>
+                            
+                                <a href="/new_blog/tags/OpenHarmony/">
+                                    <span class="chip bg-color">OpenHarmony</span>
+                                </a>
+                            
+                                <a href="/new_blog/tags/%E5%B0%8F%E7%86%8A%E6%B4%BE/">
+                                    <span class="chip bg-color">小熊派</span>
                                 </a>
                             
                         </div>
@@ -572,32 +627,48 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/new_blog/2022/05/18/hello-world/">
+                <a href="/new_blog/2022/02/17/%E5%AE%89%E8%A3%85Ubuntu%E5%88%B0%E7%A7%BB%E5%8A%A8%E4%BB%8B%E8%B4%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/new_blog/medias/featureimages/12.jpg" class="responsive-img" alt="Hello World">
+                        <img src="/new_blog/medias/featureimages/7.jpg" class="responsive-img" alt="安装Ubuntu到移动介质">
                         
-                        <span class="card-title">Hello World</span>
+                        <span class="card-title">安装Ubuntu到移动介质</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            将Ubuntu系统安装到移动介质上实现即插即用。
                         
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-05-18
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-02-17
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            Nebula-Yong
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/new_blog/categories/Linux%E7%B3%BB%E7%BB%9F/" class="post-category">
+                                    Linux系统
+                                </a>
+                            
                             
                         </span>
                     </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/new_blog/tags/Linux/">
+                        <span class="chip bg-color">Linux</span>
+                    </a>
+                    
+                    <a href="/new_blog/tags/Ubuntu/">
+                        <span class="chip bg-color">Ubuntu</span>
+                    </a>
+                    
                 </div>
                 
             </div>
@@ -609,13 +680,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/new_blog/2022/02/09/%E5%B0%8F%E7%86%8A%E6%B4%BE%E7%BA%AF%E4%BB%A3%E7%A0%81%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
+                <a href="/new_blog/2022/02/06/%E5%B0%8F%E7%86%8A%E6%B4%BE%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E6%B5%81%E7%A8%8B/">
                     <div class="card-image">
                         
                         
-                        <img src="/new_blog/medias/featureimages/11.jpg" class="responsive-img" alt="小熊派纯代码开发流程">
+                        <img src="/new_blog/medias/featureimages/3.jpg" class="responsive-img" alt="小熊派驱动开发流程">
                         
-                        <span class="card-title">小熊派纯代码开发流程</span>
+                        <span class="card-title">小熊派驱动开发流程</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -626,7 +697,7 @@
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-02-09
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-02-06
                             </span>
                         <span class="publish-author">
                             
