@@ -5,8 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="soft_mesh长文本被截断问题, Wait Aurora">
-    <meta name="description" content="一、前言某位开发者遇到了这个问题长文本执行Mesh转发截断和丢失问题 · Issue #IBPR93 · Nebula-Yong/soft_mesh - Gitee.com
-简单归纳一下ISSUE提出的问题，当节点要传输的文本大于30个字符">
+    <meta name="description" content="本文将分享解决soft_mesh被截断问题的分析思路.">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -435,9 +434,9 @@
             <div id="articleContent">
                 <h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>某位开发者遇到了这个问题<a target="_blank" rel="noopener" href="https://gitee.com/nebula-yong/soft_mesh/issues/IBPR93">长文本执行Mesh转发截断和丢失问题 · Issue #IBPR93 · Nebula-Yong/soft_mesh - Gitee.com</a></p>
 <p>简单归纳一下ISSUE提出的问题，当节点要传输的文本大于30个字符是，多余的部分会被直接截断，导致文本传输内容不全。如下图所示</p>
-<p>代码里写的要传输的文本<br><img src="/new_blog/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E5%8E%9F%E5%A7%8B%E4%BB%A3%E7%A0%81.png" alt="image-20250228205436601"></p>
+<p>代码里写的要传输的文本<br><img src="/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E5%8E%9F%E5%A7%8B%E4%BB%A3%E7%A0%81.png" alt="image-20250228205436601"></p>
 <p>实际收到的内容</p>
-<p><img src="/new_blog/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E4%B8%B2%E5%8F%A3%E6%97%A5%E5%BF%97.png" alt="image-20250228205529355"></p>
+<p><img src="/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E4%B8%B2%E5%8F%A3%E6%97%A5%E5%BF%97.png" alt="image-20250228205529355"></p>
 <h2 id="二、问题排查"><a href="#二、问题排查" class="headerlink" title="二、问题排查"></a>二、问题排查</h2><h3 id="2-1-解决思路"><a href="#2-1-解决思路" class="headerlink" title="2.1 解决思路"></a>2.1 解决思路</h3><p>从发送端的发送链条到接收端的接收链缓冲区的内容全部打印出来，看文本是在那一步被截取了</p>
 <h2 id="2-2-接收链"><a href="#2-2-接收链" class="headerlink" title="2.2 接收链"></a>2.2 接收链</h2><p>先从接收链开始，如果接收链最开始是正常的，说明肯定是发送端那边的问题。接收端部分的函数嵌套情况如下</p>
 <pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token function">mesh_recv_data</span><span class="token punctuation">(</span>src_mac<span class="token punctuation">,</span> data<span class="token punctuation">)</span> 							<span class="token comment">// 1</span>
@@ -466,7 +465,7 @@ buffer<span class="token punctuation">[</span>ret<span class="token punctuation"
 <h2 id="2-4-找到问题"><a href="#2-4-找到问题" class="headerlink" title="2.4 找到问题"></a>2.4 找到问题</h2><p>接收端的buffer设置在<code>application\samples\soft_mesh\routing_transport\src\routing_transport.c</code>下的<code>route_transport_task</code>函数的buffer局部变量被设置为了50（694行）。因为数据包的包头占用了大概20字节的空间，所以只剩30的空间用于传输数据，其原本的数值应该是512</p>
 <h2 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h2><p>这个长文本被截断的问题源自一开始开发时，接收端 <code>buffer</code> 的大小设置过小，导致接收到的数据被截断。具体来说，<code>buffer</code> 的大小在 <code>route_transport_task</code> 函数中被设置为 50 字节，而数据包的包头占用了大约 20 字节，剩余的空间仅有 30 字节。因此，当传输的文本超过 30 个字符时，超出的部分被截断，导致数据丢失。</p>
 <p>将buffer改成512可以临时解决问题，但是治标不治本，当传输的内容再次大于512时一样会造成截断的问题，这个问题其实开最初设计的时候是有考虑进去的，我设计的数据包的结构定义，有考虑到数据包超大之后，将数据包进行分片，然后在进行传输，有预留一个数据包编号的位置用处传输长文本，但是目前数据包的切片设计还没完成，当时为了匆忙完成项目的上架，就搁置了这一部分的设计，目前也暂时没遇到需要长文本的传输场景，所以就先暂时放着吧，欢迎有余力的开发者帮我补充这部分的功能。</p>
-<p><img src="/new_blog/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E6%95%B0%E6%8D%AE%E5%8C%85%E7%BB%93%E6%9E%84.png" alt="image-20250228221404456"></p>
+<p><img src="/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E6%95%B0%E6%8D%AE%E5%8C%85%E7%BB%93%E6%9E%84.png" alt="image-20250228221404456"></p>
 
                 
             </div>
@@ -613,7 +612,7 @@ buffer<span class="token punctuation">[</span>ret<span class="token punctuation"
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            本文将分享解决soft_mesh被截断问题的分析思路.
                         
                     </div>
                     <div class="publish-info">
