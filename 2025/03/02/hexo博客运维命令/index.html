@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="soft_mesh长文本被截断问题, Wait Aurora">
-    <meta name="description" content="本文将分享解决soft_mesh被截断问题的分析思路。">
+    <meta name="keywords" content="hexo博客运维命令, Wait Aurora">
+    <meta name="description" content="本文将介绍hexo的运维命令。">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +19,7 @@
 
     
 
-    <title>soft_mesh长文本被截断问题 | Wait Aurora</title>
+    <title>hexo博客运维命令 | Wait Aurora</title>
     <link rel="icon" type="image/png" href="/new_blog/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/new_blog/libs/awesome/css/all.min.css">
@@ -246,12 +246,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/new_blog/medias/featureimages/10.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/new_blog/medias/featureimages/17.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">soft_mesh长文本被截断问题</h1>
+                    <h1 class="description center-align post-title">hexo博客运维命令</h1>
                 </div>
             </div>
         </div>
@@ -367,24 +367,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
-                                <span class="chip bg-color">开源鸿蒙</span>
-                            </a>
-                        
-                            <a href="/new_blog/tags/OpenHarmony/">
-                                <span class="chip bg-color">OpenHarmony</span>
-                            </a>
-                        
-                            <a href="/new_blog/tags/soft-mesh/">
-                                <span class="chip bg-color">soft_mesh</span>
-                            </a>
-                        
-                            <a href="/new_blog/tags/Hi3863/">
-                                <span class="chip bg-color">Hi3863</span>
-                            </a>
-                        
-                            <a href="/new_blog/tags/%E6%98%9F%E9%97%AA/">
-                                <span class="chip bg-color">星闪</span>
+                            <a href="/new_blog/tags/hexo/">
+                                <span class="chip bg-color">hexo</span>
                             </a>
                         
                     </div>
@@ -395,8 +379,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/new_blog/categories/soft-mesh/" class="post-category">
-                                soft_mesh
+                            <a href="/new_blog/categories/blog/" class="post-category">
+                                blog
                             </a>
                         
                     </div>
@@ -408,7 +392,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2025-02-28
+                    2025-03-02
                 </div>
                 
 
@@ -432,40 +416,66 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>某位开发者遇到了这个问题<a target="_blank" rel="noopener" href="https://gitee.com/nebula-yong/soft_mesh/issues/IBPR93">长文本执行Mesh转发截断和丢失问题 · Issue #IBPR93 · Nebula-Yong/soft_mesh - Gitee.com</a></p>
-<p>简单归纳一下ISSUE提出的问题，当节点要传输的文本大于30个字符是，多余的部分会被直接截断，导致文本传输内容不全。如下图所示</p>
-<p>代码里写的要传输的文本<br><img src="/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E5%8E%9F%E5%A7%8B%E4%BB%A3%E7%A0%81.png" alt="原始代码"></p>
-<p>实际收到的内容</p>
-<p><img src="/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E4%B8%B2%E5%8F%A3%E6%97%A5%E5%BF%97.png" alt="串口日志"></p>
-<h2 id="二、问题排查"><a href="#二、问题排查" class="headerlink" title="二、问题排查"></a>二、问题排查</h2><h3 id="2-1-解决思路"><a href="#2-1-解决思路" class="headerlink" title="2.1 解决思路"></a>2.1 解决思路</h3><p>从发送端的发送链条到接收端的接收链缓冲区的内容全部打印出来，看文本是在那一步被截取了</p>
-<h3 id="2-2-接收链"><a href="#2-2-接收链" class="headerlink" title="2.2 接收链"></a>2.2 接收链</h3><p>先从接收链开始，如果接收链最开始是正常的，说明肯定是发送端那边的问题。接收端部分的函数嵌套情况如下</p>
-<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token function">mesh_recv_data</span><span class="token punctuation">(</span>src_mac<span class="token punctuation">,</span> data<span class="token punctuation">)</span> 							<span class="token comment">// 1</span>
-<span class="token function">osMessageQueueGet</span><span class="token punctuation">(</span>dataPacketQueueId<span class="token punctuation">,</span> <span class="token operator">&amp;</span>packet<span class="token punctuation">,</span> <span class="token constant">NULL</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>  <span class="token comment">// 2 数据在packet.data</span>
-<span class="token function">put_packet_to_queue</span><span class="token punctuation">(</span>DataPacket packet<span class="token punctuation">)</span>					<span class="token comment">// 3 这个函数向消息队列放入了数据</span>
-    <span class="token function">osMessageQueuePut</span><span class="token punctuation">(</span>dataPacketQueueId<span class="token punctuation">,</span> <span class="token operator">&amp;</span>packet<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token function">process_data_packet</span><span class="token punctuation">(</span><span class="token keyword">const</span> <span class="token keyword">char</span> <span class="token operator">*</span>mac<span class="token punctuation">,</span> <span class="token keyword">char</span> <span class="token operator">*</span>data<span class="token punctuation">)</span> 		<span class="token comment">// 4 这个函数对数据包进行了分类</span>
-HAL_Wireless_ReceiveDataFromClient						<span class="token comment">// 5 Hal层接收来到的数据</span>
-    <span class="token function">HAL_WiFi_Server_Receive</span><span class="token punctuation">(</span>server_fd<span class="token punctuation">,</span> mac<span class="token punctuation">,</span> buffer<span class="token punctuation">,</span> buffer_len<span class="token punctuation">)</span>
-<span class="token comment">// 最底层代码，socket层接收数据 soft_mesh\hal\src\hal_wifi.c</span>
-<span class="token keyword">int</span> ret <span class="token operator">=</span> <span class="token function">recv</span><span class="token punctuation">(</span>client_sock<span class="token punctuation">,</span> buffer<span class="token punctuation">,</span> buffer_len <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">if</span> <span class="token punctuation">(</span>ret <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
-    <span class="token function">LOG</span><span class="token punctuation">(</span><span class="token string">"Failed to receive data.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token function">closesocket</span><span class="token punctuation">(</span>client_sock<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
-<span class="token punctuation">&#125;</span>
-buffer<span class="token punctuation">[</span>ret<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token char">'\0'</span><span class="token punctuation">;</span>  <span class="token comment">// 确保字符串以 NULL 结尾</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+                <h2 id="一、发布文章"><a href="#一、发布文章" class="headerlink" title="一、发布文章"></a>一、发布文章</h2><h3 id="1-1-创建新的文章"><a href="#1-1-创建新的文章" class="headerlink" title="1.1 创建新的文章"></a>1.1 创建新的文章</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo new <span class="token string">"new blog"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<p>打印buffer分析问题，发现最原始的接收部分已经缺失了尾部内容。于是先分析发送端</p>
-<h3 id="2-3-发送链"><a href="#2-3-发送链" class="headerlink" title="2.3 发送链"></a>2.3 发送链</h3><pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token function">broadcast_data_packet</span><span class="token punctuation">(</span>packet<span class="token punctuation">)</span>		<span class="token comment">// 1</span>
-<span class="token function">HAL_Wireless_SendData_to_child</span><span class="token punctuation">(</span>DEFAULT_WIRELESS_TYPE<span class="token punctuation">,</span> mac_list<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">,</span> packet_data<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 2</span>
-<span class="token function">HAL_WiFi_Send_data_by_MAC</span><span class="token punctuation">(</span>MAC<span class="token punctuation">,</span> data<span class="token punctuation">)</span><span class="token punctuation">;</span> 		<span class="token comment">// 3</span>
-<span class="token function">HAL_WiFi_Send_data</span><span class="token punctuation">(</span>ip<span class="token punctuation">,</span> <span class="token number">9001</span><span class="token punctuation">,</span> data<span class="token punctuation">)</span> 			<span class="token comment">// 4</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>文章头(Front Matter)内容参考</p>
+<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown">title: 文章名字
+date: 2025-03-01 14:45:30
+top: true
+toc: true
+mathjax: false
+summary: 本文将介绍hexo的运维命令。
+categories: blog
+tags:
+  <span class="token list punctuation">-</span> hexo
+  <span class="token list punctuation">-</span> blog<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>打印发送链每个函数里面的data值，都没有出现被截取的情况。所以目前可以基本确定是在接收端socket这一部分的问题，大概率应该是在buffer内存大小分配上面</p>
-<h3 id="2-4-找到问题"><a href="#2-4-找到问题" class="headerlink" title="2.4 找到问题"></a>2.4 找到问题</h3><p>接收端的buffer设置在<code>application\samples\soft_mesh\routing_transport\src\routing_transport.c</code>下的<code>route_transport_task</code>函数的buffer局部变量被设置为了50（694行）。因为数据包的包头占用了大概20字节的空间，所以只剩30的空间用于传输数据，其原本的数值应该是512</p>
-<h2 id="三、总结"><a href="#三、总结" class="headerlink" title="三、总结"></a>三、总结</h2><p>这个长文本被截断的问题源自一开始开发时，接收端 <code>buffer</code> 的大小设置过小，导致接收到的数据被截断。具体来说，<code>buffer</code> 的大小在 <code>route_transport_task</code> 函数中被设置为 50 字节，而数据包的包头占用了大约 20 字节，剩余的空间仅有 30 字节。因此，当传输的文本超过 30 个字符时，超出的部分被截断，导致数据丢失。</p>
-<p>将buffer改成512可以临时解决问题，但是治标不治本，当传输的内容再次大于512时一样会造成截断的问题，这个问题其实开最初设计的时候是有考虑进去的，我设计的数据包的结构定义，有考虑到数据包超大之后，将数据包进行分片，然后在进行传输，有预留一个数据包编号的位置用处传输长文本，但是目前数据包的切片设计还没完成，当时为了匆忙完成项目的上架，就搁置了这一部分的设计，目前也暂时没遇到需要长文本的传输场景，所以就先暂时放着吧，欢迎有余力的开发者帮我补充这部分的功能。</p>
-<p><img src="/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/%E6%95%B0%E6%8D%AE%E5%8C%85%E7%BB%93%E6%9E%84.png" alt="数据包结构"></p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>title</td>
+<td>文章标题</td>
+</tr>
+<tr>
+<td>date</td>
+<td>文章发布时间</td>
+</tr>
+<tr>
+<td>top</td>
+<td>文章是否置顶（部分主题支持）</td>
+</tr>
+<tr>
+<td>toc</td>
+<td>是否启用文章目录</td>
+</tr>
+<tr>
+<td>mathjax</td>
+<td>是否支持数学公式（如 LaTeX）</td>
+</tr>
+<tr>
+<td>summary</td>
+<td>文章摘要</td>
+</tr>
+<tr>
+<td>categories</td>
+<td>文章分类（单个分类）</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>文章标签（可多个）</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-本地查看文章"><a href="#1-2-本地查看文章" class="headerlink" title="1.2 本地查看文章"></a>1.2 本地查看文章</h3><p>直接执行清理、编译和运行本地服务器</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo clean <span class="token operator">&amp;&amp;</span> hexo generate <span class="token operator">&amp;&amp;</span> hexo server -p <span class="token number">5000</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="1-3-将文章推送到云端"><a href="#1-3-将文章推送到云端" class="headerlink" title="1.3 将文章推送到云端"></a>1.3 将文章推送到云端</h3><p>直接使用部署命令</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo deploy<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
 
                 
             </div>
@@ -492,7 +502,7 @@ buffer<span class="token punctuation">[</span>ret<span class="token punctuation"
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://nebula-yong.github.io/new_blog/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/">https://nebula-yong.github.io/new_blog/new_blog/2025/02/28/soft-mesh%E9%95%BF%E6%96%87%E6%9C%AC%E8%A2%AB%E6%88%AA%E6%96%AD%E9%97%AE%E9%A2%98/</a>
+                    <a href="https://nebula-yong.github.io/new_blog/new_blog/2025/03/02/hexo%E5%8D%9A%E5%AE%A2%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/">https://nebula-yong.github.io/new_blog/new_blog/2025/03/02/hexo%E5%8D%9A%E5%AE%A2%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -530,24 +540,8 @@ buffer<span class="token punctuation">[</span>ret<span class="token punctuation"
                     
                         <div class="article-tag">
                             
-                                <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
-                                    <span class="chip bg-color">开源鸿蒙</span>
-                                </a>
-                            
-                                <a href="/new_blog/tags/OpenHarmony/">
-                                    <span class="chip bg-color">OpenHarmony</span>
-                                </a>
-                            
-                                <a href="/new_blog/tags/soft-mesh/">
-                                    <span class="chip bg-color">soft_mesh</span>
-                                </a>
-                            
-                                <a href="/new_blog/tags/Hi3863/">
-                                    <span class="chip bg-color">Hi3863</span>
-                                </a>
-                            
-                                <a href="/new_blog/tags/%E6%98%9F%E9%97%AA/">
-                                    <span class="chip bg-color">星闪</span>
+                                <a href="/new_blog/tags/hexo/">
+                                    <span class="chip bg-color">hexo</span>
                                 </a>
                             
                         </div>
@@ -595,9 +589,60 @@ buffer<span class="token punctuation">[</span>ret<span class="token punctuation"
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/new_blog/2025/03/02/hexo%E5%8D%9A%E5%AE%A2%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/new_blog/medias/featureimages/17.jpg" class="responsive-img" alt="hexo博客运维命令">
+                        
+                        <span class="card-title">hexo博客运维命令</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            本文将介绍hexo的运维命令。
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-03-02
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/new_blog/categories/blog/" class="post-category">
+                                    blog
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/new_blog/tags/hexo/">
+                        <span class="chip bg-color">hexo</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/new_blog/2025/03/01/soft-mesh%E4%B8%A2%E5%8C%85%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
                     <div class="card-image">
@@ -615,9 +660,9 @@ buffer<span class="token punctuation">[</span>ret<span class="token punctuation"
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2025-03-01
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-03-01
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -653,43 +698,6 @@ buffer<span class="token punctuation">[</span>ret<span class="token punctuation"
                         <span class="chip bg-color">星闪</span>
                     </a>
                     
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/new_blog/2023/06/02/hello-world/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/new_blog/medias/featureimages/12.jpg" class="responsive-img" alt="Hello World">
-                        
-                        <span class="card-title">Hello World</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-06-02
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            Nebula-Yong
-                            
-                        </span>
-                    </div>
                 </div>
                 
             </div>
