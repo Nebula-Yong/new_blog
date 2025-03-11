@@ -4,8 +4,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="hexo博客运维命令, Wait Aurora">
-    <meta name="description" content="本文将介绍hexo的运维命令。">
+    <meta name="keywords" content="强制中断apt安装导致包损坏, Wait Aurora">
+    <meta name="description" content="本文将分享强制中断apt的安装，导致apt无法使用的解决方案">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +19,7 @@
 
     
 
-    <title>hexo博客运维命令 | Wait Aurora</title>
+    <title>强制中断apt安装导致包损坏 | Wait Aurora</title>
     <link rel="icon" type="image/png" href="/new_blog/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/new_blog/libs/awesome/css/all.min.css">
@@ -246,12 +246,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/new_blog/medias/featureimages/17.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/new_blog/medias/featureimages/8.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">hexo博客运维命令</h1>
+                    <h1 class="description center-align post-title">强制中断apt安装导致包损坏</h1>
                 </div>
             </div>
         </div>
@@ -367,8 +367,16 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/new_blog/tags/hexo/">
-                                <span class="chip bg-color">hexo</span>
+                            <a href="/new_blog/tags/Linux%E8%BF%90%E7%BB%B4/">
+                                <span class="chip bg-color">Linux运维</span>
+                            </a>
+                        
+                            <a href="/new_blog/tags/apt%E5%BC%82%E5%B8%B8/">
+                                <span class="chip bg-color">apt异常</span>
+                            </a>
+                        
+                            <a href="/new_blog/tags/TexLive/">
+                                <span class="chip bg-color">TexLive</span>
                             </a>
                         
                     </div>
@@ -379,8 +387,8 @@
                     <div class="post-cate">
                         <i class="fas fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/new_blog/categories/blog/" class="post-category">
-                                blog
+                            <a href="/new_blog/categories/Linux%E8%BF%90%E7%BB%B4/" class="post-category">
+                                Linux运维
                             </a>
                         
                     </div>
@@ -392,7 +400,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2025-03-02
+                    2025-03-12
                 </div>
                 
 
@@ -416,65 +424,44 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="一、发布文章"><a href="#一、发布文章" class="headerlink" title="一、发布文章"></a>一、发布文章</h2><h3 id="1-1-创建新的文章"><a href="#1-1-创建新的文章" class="headerlink" title="1.1 创建新的文章"></a>1.1 创建新的文章</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo new <span class="token string">"new blog"</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+                <h2 id="一、起因"><a href="#一、起因" class="headerlink" title="一、起因"></a>一、起因</h2><p>在WSL安装texlive，想在WSL里面编写Latex文档，结果执行命令<code>sudo apt install texlive-full</code>在安装的时候卡死，强行关掉终端运行apt命令的时候会报错</p>
+<pre class="line-numbers language-log" data-language="log"><code class="language-log">cjy<span class="token operator">@</span>DESKTOP<span class="token operator">-</span>U65NGLT<span class="token operator">:</span><span class="token operator">~</span><span class="token operator">$</span> sudo apt install make
+<span class="token punctuation">[</span>sudo<span class="token punctuation">]</span> <span class="token property">password for cjy:</span>
+<span class="token property">E:</span> dpkg was interrupted<span class="token punctuation">,</span> you must manually run <span class="token string">'sudo dpkg --configure -a'</span> to correct the problem<span class="token punctuation">.</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
-<p>文章头(Front Matter)内容参考</p>
-<pre class="line-numbers language-markdown" data-language="markdown"><code class="language-markdown">title: 文章名字
-date: 2025-03-01 14:45:30
-top: true
-toc: true
-mathjax: false
-summary: 本文将介绍hexo的运维命令。
-categories: blog
-tags:
-  <span class="token list punctuation">-</span> hexo
-  <span class="token list punctuation">-</span> blog<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>如果执行<code>sudo dpkg --configure -a</code>修复依旧会进入卡死状态，于是打算放弃在WSL上安装texlive的方案。需要解决apt提示报错的问题，不然会影响WSL的正常运行，因为apt装其他东西都装不了。</p>
+<h2 id="二、解决方案"><a href="#二、解决方案" class="headerlink" title="二、解决方案"></a>二、解决方案</h2><p>首先运行下面的查询命令，查找所有状态不是 <code>ii</code> (installed) 的包，其中 <code>rc</code>、<code>un</code>、<code>iU</code> 之类的状态可能表示未完成安装或损坏。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">dpkg -l <span class="token operator">|</span> <span class="token function">grep</span> -v <span class="token string">'^ii'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<table>
-<thead>
-<tr>
-<th>字段</th>
-<th>含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>title</td>
-<td>文章标题</td>
-</tr>
-<tr>
-<td>date</td>
-<td>文章发布时间</td>
-</tr>
-<tr>
-<td>top</td>
-<td>文章是否置顶（部分主题支持）</td>
-</tr>
-<tr>
-<td>toc</td>
-<td>是否启用文章目录</td>
-</tr>
-<tr>
-<td>mathjax</td>
-<td>是否支持数学公式（如 LaTeX）</td>
-</tr>
-<tr>
-<td>summary</td>
-<td>文章摘要</td>
-</tr>
-<tr>
-<td>categories</td>
-<td>文章分类（单个分类）</td>
-</tr>
-<tr>
-<td>tags</td>
-<td>文章标签（可多个）</td>
-</tr>
-</tbody></table>
-<h3 id="1-2-本地查看文章"><a href="#1-2-本地查看文章" class="headerlink" title="1.2 本地查看文章"></a>1.2 本地查看文章</h3><p>直接执行清理、编译和运行本地服务器</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo clean <span class="token operator">&amp;&amp;</span> hexo generate <span class="token operator">&amp;&amp;</span> hexo server -p <span class="token number">5000</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>查询结果如下</p>
+<pre class="line-numbers language-log" data-language="log"><code class="language-log">cjy<span class="token operator">@</span>DESKTOP<span class="token operator">-</span>U65NGLT<span class="token operator">:</span><span class="token operator">~</span><span class="token operator">$</span> dpkg <span class="token operator">-</span>l <span class="token operator">|</span> grep <span class="token operator">-</span>v <span class="token string">'^ii'</span>
+Desired<span class="token operator">=</span>Unknown<span class="token operator">/</span>Install<span class="token operator">/</span>Remove<span class="token operator">/</span>Purge<span class="token operator">/</span>Hold
+<span class="token operator">|</span> Status<span class="token operator">=</span>Not<span class="token operator">/</span>Inst<span class="token operator">/</span>Conf<span class="token operator">-</span>files<span class="token operator">/</span>Unpacked<span class="token operator">/</span>halF<span class="token operator">-</span>conf<span class="token operator">/</span>Half<span class="token operator">-</span>inst<span class="token operator">/</span>trig<span class="token operator">-</span>aWait<span class="token operator">/</span>Trig<span class="token operator">-</span>pend
+<span class="token operator">|</span><span class="token operator">/</span> Err<span class="token operator">?</span><span class="token operator">=</span><span class="token operator">(</span>none<span class="token operator">)</span><span class="token operator">/</span>Reinst<span class="token operator">-</span>required <span class="token operator">(</span>Status<span class="token punctuation">,</span>Err<span class="token operator">:</span> uppercase<span class="token operator">=</span>bad<span class="token operator">)</span>
+<span class="token operator">|</span><span class="token operator">|</span><span class="token operator">/</span> Name                              Version                           Architecture Description
+<span class="token operator">+</span><span class="token operator">+</span><span class="token operator">+</span><span class="token operator">-</span><span class="token separator comment">=================================</span><span class="token operator">-</span><span class="token separator comment">=================================</span><span class="token operator">-</span><span class="token separator comment">============</span><span class="token operator">-</span><span class="token separator comment">===============================================================================</span>
+iF  context                           <span class="token number">2019.03.21.20190425</span><span class="token operator">-</span><span class="token number">2</span>             all          powerful TeX format
+iU  context<span class="token operator">-</span>modules                   <span class="token number">20190710</span><span class="token operator">-</span><span class="token number">1</span>                        all          additional ConTeXt modules
+it  install<span class="token operator">-</span>info                      6<span class="token punctuation">.</span>7<span class="token punctuation">.</span>0<span class="token punctuation">.</span>dfsg<span class="token punctuation">.</span>2<span class="token operator">-</span><span class="token number">5</span>                    amd64        Manage installed documentation in info format
+it  libc<span class="token operator">-</span>bin                          <span class="token number">2.31</span><span class="token operator">-</span>0ubuntu9<span class="token punctuation">.</span>9                   amd64        GNU C Library<span class="token operator">:</span> Binaries
+it  libgdk<span class="token operator">-</span>pixbuf2<span class="token punctuation">.</span>0<span class="token operator">-</span><span class="token number">0</span><span class="token operator">:</span>amd64          <span class="token number">2.40.0</span><span class="token operator">+</span>dfsg<span class="token operator">-</span>3ubuntu0<span class="token punctuation">.</span>5            amd64        GDK Pixbuf library
+iU  libgirara<span class="token operator">-</span>gtk3<span class="token operator">-</span><span class="token number">3</span><span class="token operator">:</span>amd64            <span class="token number">0.3.4</span><span class="token operator">-</span><span class="token number">1</span>                           amd64        library for minimalistic user interfaces <span class="token operator">(</span>shared libraries<span class="token operator">)</span>
+it  libglib2<span class="token punctuation">.</span>0<span class="token operator">-</span><span class="token number">0</span><span class="token operator">:</span>amd64                <span class="token number">2.64.6</span><span class="token operator">-</span><span class="token number">1</span><span class="token operator">~</span>ubuntu20<span class="token punctuation">.</span>04<span class="token punctuation">.</span>4            amd64        GLib library of C routines
+iU  libgtk<span class="token operator">-</span><span class="token number">3</span><span class="token operator">-</span><span class="token number">0</span><span class="token operator">:</span>amd64                  <span class="token number">3.24.20</span><span class="token operator">-</span>0ubuntu1<span class="token punctuation">.</span>2                amd64        GTK graphical user interface library
+iU  libgtk<span class="token operator">-</span><span class="token number">3</span><span class="token operator">-</span>bin                      <span class="token number">3.24.20</span><span class="token operator">-</span>0ubuntu1<span class="token punctuation">.</span>2                amd64        programs for the GTK graphical user interface library
+iW  libgtk<span class="token operator">-</span><span class="token number">3</span><span class="token operator">-</span>common                   <span class="token number">3.24.20</span><span class="token operator">-</span>0ubuntu1<span class="token punctuation">.</span>2                all          common files for the GTK graphical user interface library
+it  man<span class="token operator">-</span>db                            <span class="token number">2.9.1</span><span class="token operator">-</span><span class="token number">1</span>                           amd64        tools for reading manual pages
+it  mime<span class="token operator">-</span>support                      3<span class="token punctuation">.</span>64ubuntu1                       all          MIME files <span class="token string">'mime.types'</span> <span class="token operator">&amp;</span> <span class="token string">'mailcap'</span><span class="token punctuation">,</span> and support programs
+iW  openjade                          1<span class="token punctuation">.</span>4devel1<span class="token operator">-</span>21<span class="token punctuation">.</span>3ubuntu1             amd64        Implementation of the DSSSL language
+iU  qt5<span class="token operator">-</span>gtk<span class="token operator">-</span>platformtheme<span class="token operator">:</span>amd64       <span class="token number">5.12.8</span><span class="token operator">+</span>dfsg<span class="token operator">-</span>0ubuntu2<span class="token punctuation">.</span>1            amd64        Qt <span class="token number">5</span> GTK<span class="token operator">+</span> <span class="token number">3</span> platform theme
+it  sgml<span class="token operator">-</span>base                         <span class="token number">1.29.1</span>                            all          SGML infrastructure and SGML catalog file support
+it  tex<span class="token operator">-</span>common                        <span class="token number">6.13</span>                              all          common infrastructure for building and installing TeX
+iU  texlive<span class="token operator">-</span>full                      <span class="token number">2019.20200218</span><span class="token operator">-</span><span class="token number">1</span>                   all          TeX Live<span class="token operator">:</span> metapackage pulling in all components of TeX Live
+iU  zathura                           <span class="token number">0.4.5</span><span class="token operator">-</span><span class="token number">2</span>                           amd64        document viewer with a minimalistic interface
+iU  zathura<span class="token operator">-</span>pdf<span class="token operator">-</span>poppler               <span class="token number">0.3.0</span><span class="token operator">-</span><span class="token number">1</span>                           amd64        PDF support for zathura<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<h3 id="1-3-将文章推送到云端"><a href="#1-3-将文章推送到云端" class="headerlink" title="1.3 将文章推送到云端"></a>1.3 将文章推送到云端</h3><p>直接使用部署命令</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">hexo deploy<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>可以发现我们安装的texlive-full属于iU状态，执行下面命令将其卸载，即可解决apt报错的问题。</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> dpkg --remove --force-remove-reinstreq texlive-full<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
 
                 
@@ -502,7 +489,7 @@ tags:
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="https://nebula-yong.github.io/new_blog/new_blog/2025/03/02/hexo%E5%8D%9A%E5%AE%A2%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/">https://nebula-yong.github.io/new_blog/new_blog/2025/03/02/hexo%E5%8D%9A%E5%AE%A2%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/</a>
+                    <a href="https://nebula-yong.github.io/new_blog/new_blog/2025/03/12/%E5%BC%BA%E5%88%B6%E4%B8%AD%E6%96%ADapt%E5%AE%89%E8%A3%85%E5%AF%BC%E8%87%B4%E5%8C%85%E6%8D%9F%E5%9D%8F/">https://nebula-yong.github.io/new_blog/new_blog/2025/03/12/%E5%BC%BA%E5%88%B6%E4%B8%AD%E6%96%ADapt%E5%AE%89%E8%A3%85%E5%AF%BC%E8%87%B4%E5%8C%85%E6%8D%9F%E5%9D%8F/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -540,8 +527,16 @@ tags:
                     
                         <div class="article-tag">
                             
-                                <a href="/new_blog/tags/hexo/">
-                                    <span class="chip bg-color">hexo</span>
+                                <a href="/new_blog/tags/Linux%E8%BF%90%E7%BB%B4/">
+                                    <span class="chip bg-color">Linux运维</span>
+                                </a>
+                            
+                                <a href="/new_blog/tags/apt%E5%BC%82%E5%B8%B8/">
+                                    <span class="chip bg-color">apt异常</span>
+                                </a>
+                            
+                                <a href="/new_blog/tags/TexLive/">
+                                    <span class="chip bg-color">TexLive</span>
                                 </a>
                             
                         </div>
@@ -589,9 +584,10 @@ tags:
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/new_blog/2025/03/12/%E5%BC%BA%E5%88%B6%E4%B8%AD%E6%96%ADapt%E5%AE%89%E8%A3%85%E5%AF%BC%E8%87%B4%E5%8C%85%E6%8D%9F%E5%9D%8F/">
                     <div class="card-image">
@@ -609,9 +605,9 @@ tags:
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2025-03-12
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-03-12
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -624,6 +620,7 @@ tags:
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -650,31 +647,31 @@ tags:
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/new_blog/2025/03/01/soft-mesh%E4%B8%A2%E5%8C%85%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90/">
+                <a href="/new_blog/2025/03/02/hexo%E5%8D%9A%E5%AE%A2%E8%BF%90%E7%BB%B4%E5%91%BD%E4%BB%A4/">
                     <div class="card-image">
                         
                         
-                        <img src="/new_blog/medias/featureimages/23.jpg" class="responsive-img" alt="soft_mesh丢包问题分析">
+                        <img src="/new_blog/medias/featureimages/17.jpg" class="responsive-img" alt="hexo博客运维命令">
                         
-                        <span class="card-title">soft_mesh丢包问题分析</span>
+                        <span class="card-title">hexo博客运维命令</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            本文将分析soft_mesh丢包问题。
+                            本文将介绍hexo的运维命令。
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2025-03-01
+                                <i class="far fa-clock fa-fw icon-date"></i>2025-03-02
                             </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/new_blog/categories/soft-mesh/" class="post-category">
-                                    soft_mesh
+                            <a href="/new_blog/categories/blog/" class="post-category">
+                                    blog
                                 </a>
                             
                             
@@ -684,24 +681,8 @@ tags:
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
-                        <span class="chip bg-color">开源鸿蒙</span>
-                    </a>
-                    
-                    <a href="/new_blog/tags/OpenHarmony/">
-                        <span class="chip bg-color">OpenHarmony</span>
-                    </a>
-                    
-                    <a href="/new_blog/tags/soft-mesh/">
-                        <span class="chip bg-color">soft_mesh</span>
-                    </a>
-                    
-                    <a href="/new_blog/tags/Hi3863/">
-                        <span class="chip bg-color">Hi3863</span>
-                    </a>
-                    
-                    <a href="/new_blog/tags/%E6%98%9F%E9%97%AA/">
-                        <span class="chip bg-color">星闪</span>
+                    <a href="/new_blog/tags/hexo/">
+                        <span class="chip bg-color">hexo</span>
                     </a>
                     
                 </div>
