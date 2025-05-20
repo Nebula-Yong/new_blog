@@ -451,8 +451,8 @@
 </li>
 </ol>
 <p>这种设计不仅解决了现有方案的局限性，也为物联网领域的组网应用提供了一个灵活、可靠的解决方案。</p>
-<h3 id="1-4-需求定义（实现效果）"><a href="#1-4-需求定义（实现效果）" class="headerlink" title="1.4 需求定义（实现效果）"></a>1.4 需求定义（实现效果）</h3><p>每个节点使用统一的Mesh协议代码，节点之间应该是平等的，节点的角色应该由Mesh协议自行协商。使用Mesh协议时，用户只需要定义Mesh的网络ID，节点启动后会自动和同ID的节点进行组网，组网的过程应该由Mesh协议自主控制，对用户时无感的。组网成功后，节点能发送消息给Mesh网络内的任意节点。</p>
-<h2 id="2-SoftMesh-协议简介：一套轻量自组织网络协议"><a href="#2-SoftMesh-协议简介：一套轻量自组织网络协议" class="headerlink" title="2  SoftMesh 协议简介：一套轻量自组织网络协议"></a>2  SoftMesh 协议简介：一套轻量自组织网络协议</h2><h3 id="2-1-系统总览"><a href="#2-1-系统总览" class="headerlink" title="2.1 系统总览"></a>2.1 系统总览</h3><p>SoftMesh的系统架构图如下图所示，从上向下分别是应用接口层、网络状态管理层、路由与数据传输层、硬件抽象层。对于一个Mesh网络来说，最核心的任务可以简化为两部分，一个是组网，一个是路由。组网是实现节点之间物理上通过无线连接起来，而路由是为了能够让节点知道目标节点的位置，实现正常的网络通讯。组网对应在网络状态管理层实现，路由在路由与数据传输层实现。<br><img src="嵌入式软组网实战：自定义-Mesh-协议设计与代码开源/SoftMesh_framwork.png" alt="SoftMesh_framwork" style="zoom: 15%;" /></p>
+<h3 id="1-4-需求定义（实现效果）"><a href="#1-4-需求定义（实现效果）" class="headerlink" title="1.4 需求定义（实现效果）"></a>1.4 需求定义（实现效果）</h3><p>每个节点使用统一的Mesh协议代码，节点之间应该是平等的，节点的角色应该由Mesh协议自行协商。使用Mesh协议时，用户只需要定义Mesh的网络ID，节点启动后会自动和同ID的节点进行组网，组网的过程应该由Mesh协议自主控制，对用户是无感的。组网成功后，节点能发送消息给Mesh网络内的任意节点。</p>
+<h2 id="2-SoftMesh-协议简介：一套轻量自组织网络协议"><a href="#2-SoftMesh-协议简介：一套轻量自组织网络协议" class="headerlink" title="2  SoftMesh 协议简介：一套轻量自组织网络协议"></a>2  SoftMesh 协议简介：一套轻量自组织网络协议</h2><h3 id="2-1-系统总览"><a href="#2-1-系统总览" class="headerlink" title="2.1 系统总览"></a>2.1 系统总览</h3><p>SoftMesh的系统架构图如下图所示，从上向下分别是应用接口层、网络状态管理层、路由与数据传输层、硬件抽象层。对于一个Mesh网络来说，最核心的任务可以简化为两部分，一个是组网，一个是路由。组网是实现节点之间物理上通过无线连接起来，而路由是为了能够让节点知道目标节点的位置，实现正常的网络通讯。组网对应在网络状态管理层实现，路由在路由与数据传输层实现。<br><img src="SoftMesh_framwork.png" alt="SoftMesh_framwork" style="zoom: 15%;" /></p>
 <h3 id="2-2-应用接口层"><a href="#2-2-应用接口层" class="headerlink" title="2.2 应用接口层"></a>2.2 应用接口层</h3><p>应用接口层是SoftMesh协议的顶层，为上层应用提供统一的接口，支持多种应用场景。该层提供了以下核心接口：</p>
 <ol>
 <li><p><strong>网络初始化接口</strong></p>
@@ -557,7 +557,7 @@
 <li>节点状态通告</li>
 </ul>
 <h3 id="2-3-网络状态管理层"><a href="#2-3-网络状态管理层" class="headerlink" title="2.3 网络状态管理层"></a>2.3 网络状态管理层</h3><p>网络状态管理层是SoftMesh协议的核心层，负责实现网络的自组织功能。该层采用有限状态机（FSM）设计，通过精确的状态转换控制，实现网络的自组织。有限状态机的状态转换图如下所示。</p>
-<img src="嵌入式软组网实战：自定义-Mesh-协议设计与代码开源/softmesh_fsm.png" alt="softmesh_fsm" style="zoom:15%;" />
+<img src="softmesh_fsm.png" alt="softmesh_fsm" style="zoom:15%;" />
 
 
 
@@ -567,16 +567,16 @@
 <li>支持多跳通信</li>
 <li>具备自愈能力，当某个节点断开时，其子节点可以重新寻找父节点</li>
 </ul>
-<h3 id="2-4-路由与数据传输层"><a href="#2-4-路由与数据传输层" class="headerlink" title="2.4 路由与数据传输层"></a>2.4 路由与数据传输层</h3><p>路由与数据传输层负责路由和数据传输任务，在这一次最核心的部分是路由表的数据结构和使用方式，而数据传输和转发在路由实现之后只需要进行简单的逻辑控制即可。完整的构建该协议的路由表需要使用三个数据结构，分别是哈希表、邻接表和父节点数组。</p>
+<h3 id="2-4-路由与数据传输层"><a href="#2-4-路由与数据传输层" class="headerlink" title="2.4 路由与数据传输层"></a>2.4 路由与数据传输层</h3><p>路由与数据传输层负责路由和数据传输任务，在这一层最核心的部分是路由表的数据结构和使用方式，而数据传输和转发在路由实现之后只需要进行简单的逻辑控制即可。完整的构建该协议的路由表需要使用三个数据结构，分别是哈希表、邻接表和父节点数组。</p>
 <p>哈希表用于记录MAC地址和索引的关系，MAC地址是节点在一个Mesh网络的唯一标识，但是如果直接拿MAC地址做索引会十分的不方便，所以单独使用了一个哈希表记录MAC地址和索引的映射关系，如下图示例<code>A1B2C3</code>的对应索引是<code>2</code>后续将用索引构建路由表。</p>
 <p>邻接表用于记录节点与节点之间的连通关系，类似key-value的结构，每一个节点记录其邻居节点（包括父节点和子节点），如下图的案例所示节点1的邻居节点分别是节点0、节点5和节点6。</p>
-<p>仅仅使用邻接表只能表征节点之间连通关系，并不能构建树状图的父子关系，因此还需要单独使用一个父节点数组记录每个节点的父节点。该数组更多的作用是用来溯源路径，比如0号节点想发消息给6号节点，可以再父节点数组递归找6号节点的父节点，就可以找到6→1→0的发送路径。0号节点就知道把数据转发给1号节点处理就行了。</p>
-<p><img src="/new_blog/%E5%B5%8C%E5%85%A5%E5%BC%8F%E8%BD%AF%E7%BB%84%E7%BD%91%E5%AE%9E%E6%88%98%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89-Mesh-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%BC%80%E6%BA%90/routing_data_structure-1747577316380-1.png" alt="routing_data_structure"></p>
+<p>仅仅使用邻接表只能表征节点之间连通关系，并不能构建树状图的父子关系，因此还需要单独使用一个父节点数组记录每个节点的父节点。该数组更多的作用是用来溯源路径，比如0号节点想发消息给6号节点，可以在父节点数组递归找6号节点的父节点，就可以找到6→1→0的发送路径。0号节点就知道把数据转发给1号节点处理就行了。</p>
+<p><img src="/new_blog/2024/11/01/%E5%B5%8C%E5%85%A5%E5%BC%8F%E8%BD%AF%E7%BB%84%E7%BD%91%E5%AE%9E%E6%88%98%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89-Mesh-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%BC%80%E6%BA%90/routing_data_structure-1747577316380-1.png" alt="routing_data_structure"></p>
 <h3 id="2-5-测试层"><a href="#2-5-测试层" class="headerlink" title="2.5 测试层"></a>2.5 测试层</h3><p>在开发的过程中，每一层的代码目录都有三个文件夹，分别是<code>inc</code>、<code>src</code>、<code>test</code>这三个目录，其中test目录就是单独测试该层功能的代码，同时在每层的.c源码文件里面，可以寻找<code>ENABLE_LOG</code> 宏定义，将其打开可以看到更多该部分代码的运行过程日志文件，感兴趣的开发者可以通过单独运行test代码和打开日志宏更加细致的了解该协议运行机制。</p>
 <p>由于目前个人精力有限，各层只是介绍了部分核心的内容，后续有时间会单独介绍各层的具体实现细节。</p>
 <h2 id="3-项目展示"><a href="#3-项目展示" class="headerlink" title="3 项目展示"></a>3 项目展示</h2><p>目前SoftMesh适配的芯片是hi3863，如果需要复现该项目，购买使用该芯片的开发板或者自己的设计的开发板都行。因为该项目没有使用任何外设接口，只是用了WiFi的功能，因此理论上兼容任何使用hi3863的开发板。目前也只适配了hi3863芯片，理论上只要具备STA和AP共存能力的开发板，都能很容易的移植适配本组网协议。</p>
-<h3 id="3-1-基础验证实验"><a href="#3-1-基础验证实验" class="headerlink" title="3.1 基础验证实验"></a>3.1 基础验证实验</h3><p>基础实验验证的内容分别是：自组网、广播、单播、根节点下线自恢复。该实验使用了4个节点，其中3个节点运行的是普通的接收代码，另外1个节点还加入了广播的代码。硬件接线如下图所示，首先上电三个普通节点，验证节点的自组网功能呢，然后再上电广播节点，验证节点的广播能力，各个节点收到广播之后，会向广播节点回应一个消息，验证节点的单播能力。最后会找到这个Mesh网络的根节点，直接断电下线，验证Mesh网络的自恢复能力。</p>
-<p><img src="/new_blog/%E5%B5%8C%E5%85%A5%E5%BC%8F%E8%BD%AF%E7%BB%84%E7%BD%91%E5%AE%9E%E6%88%98%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89-Mesh-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%BC%80%E6%BA%90/multi_node_setup.png" alt="multi_node_setup"></p>
+<h3 id="3-1-基础验证实验"><a href="#3-1-基础验证实验" class="headerlink" title="3.1 基础验证实验"></a>3.1 基础验证实验</h3><p>基础实验验证的内容分别是：自组网、广播、单播、根节点下线自恢复。该实验使用了4个节点，其中3个节点运行的是普通的接收代码，另外1个节点还加入了广播的代码。硬件接线如下图所示，首先上电三个普通节点，验证节点的自组网功能，然后再上电广播节点，验证节点的广播能力，各个节点收到广播之后，会向广播节点回应一个消息，验证节点的单播能力。最后会找到这个Mesh网络的根节点，直接断电下线，验证Mesh网络的自恢复能力。</p>
+<p><img src="/new_blog/2024/11/01/%E5%B5%8C%E5%85%A5%E5%BC%8F%E8%BD%AF%E7%BB%84%E7%BD%91%E5%AE%9E%E6%88%98%EF%BC%9A%E8%87%AA%E5%AE%9A%E4%B9%89-Mesh-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1%E4%B8%8E%E4%BB%A3%E7%A0%81%E5%BC%80%E6%BA%90/multi_node_setup.png" alt="multi_node_setup"></p>
 <p>Bilibili视频展示地址： <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1npUNYVEAD/">https://www.bilibili.com/video/BV1npUNYVEAD/</a></p>
 <iframe 
   src="//player.bilibili.com/player.html?isOutside=true&aid=113474847900204&bvid=BV1npUNYVEAD&cid=26739608997&p=1"
@@ -589,14 +589,14 @@
 
 
 <p>Youtube视频展示地址：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=prL1zMB5aXc">https://www.youtube.com/watch?v=prL1zMB5aXc</a></p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/prL1zMB5aXc?si=GLj9HMk3qdSjS2PL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="800" height="450" src="https://www.youtube.com/embed/prL1zMB5aXc?si=GLj9HMk3qdSjS2PL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 
 
 
 
-<h3 id="3-2-小规模组网验证实验"><a href="#3-2-小规模组网验证实验" class="headerlink" title="3.2 小规模组网验证实验"></a>3.2 小规模组网验证实验</h3><p>在验证节点功能正常的基础上，利用实验室资源测试了13个节点小规模组网的。首先单独先启动一个节点，作为根节点方便查看节点拓扑结构，这样就能看到节点的上电组网情况。然后分别上电3组拓展坞，每一个拓展坞接了4个开发板。</p>
-<p>bilibili视频展示地址：bilibili.com/video/BV1iaUNYTEKp/</p>
+<h3 id="3-2-小规模组网验证实验"><a href="#3-2-小规模组网验证实验" class="headerlink" title="3.2 小规模组网验证实验"></a>3.2 小规模组网验证实验</h3><p>在验证节点功能正常的基础上，利用实验室资源测试了13个节点小规模组网的。首先单独先启动一个节点，作为根节点方便查看节点拓扑结构，这样就能看到节点的上电组网情况。然后分别上电3组扩展坞，每一个拓展坞接了4个开发板。</p>
+<p>bilibili视频展示地址：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iaUNYTEKp/">https://www.bilibili.com/video/BV1iaUNYTEKp/</a></p>
 <iframe 
   src="//player.bilibili.com/player.html?isOutside=true&aid=113474814411165&bvid=BV1iaUNYTEKp&cid=26739608585&p=1"
   scrolling="no" 
@@ -607,17 +607,13 @@
 </iframe>
 
 <p>youtube视频展示地址：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=jPRUZ6mjxbU">https://www.youtube.com/watch?v=jPRUZ6mjxbU</a></p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/jPRUZ6mjxbU?si=uAhpppLwoziLIGiX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="800" height="450" src="https://www.youtube.com/embed/jPRUZ6mjxbU?si=uAhpppLwoziLIGiX" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-<h2 id="4-经验总结与展望"><a href="#4-经验总结与展望" class="headerlink" title="4 经验总结与展望"></a>4 经验总结与展望</h2><h3 id="4-1-总结"><a href="#4-1-总结" class="headerlink" title="4.1 总结"></a>4.1 总结</h3><p>做这个项目的初心本来是想实现星闪Mesh组网功能，但是单单复现学习WiFi Mesh的过程就耗费了1个月的时间。尽管在复现之初已经梳理清楚了思路和原理，但是将理论转为实践总会遇到各种各样的不可预测的一些问题和一开始没有考虑到的细节。也正是因为一开始梳理清楚的思路和需求，做好了版本迭代记录，让工程向着有序和收敛的方向发展，而不是向着代码爆炸的“屎山”方向奔溃。不管怎么样，这个项目自认为算是我本科阶段做的较为完整的项目之一，融合了工程、数据结构、算法的知识为一体。但也不可否认的是，在只做了一个月时间的情况下，这个项目也不可能做到尽善尽美到可以到商业化使用的地步。内部的很多细节还有待优化的地方，例如在后期赶工期的时候，为了快速实现组网和数据传输的效果，直接定死了数据包的大小，也没有去实现大数据包的分割机制，类似这样的优化问题有很多，我也意识到这些细节都是一个无底洞，我目前也不可能投入那么多时间精力去维护这些细节。幸运的是，我成功的在星闪体验官的活动结束前实现了WiFi Mesh的组网和通讯功能，打造好了Soft Mesh的项目框架。不幸的是，我没有时间把这个工程移植到星闪上，去验证我的框架。</p>
+<h2 id="4-经验总结与展望"><a href="#4-经验总结与展望" class="headerlink" title="4 经验总结与展望"></a>4 经验总结与展望</h2><h3 id="4-1-总结"><a href="#4-1-总结" class="headerlink" title="4.1 总结"></a>4.1 总结</h3><p>做这个项目的初心本来是想实现星闪Mesh组网功能，但是单单复现学习WiFi Mesh的过程就耗费了1个月的时间。尽管在复现之初已经梳理清楚了思路和原理，但是将理论转为实践总会遇到各种各样的不可预测的一些问题和一开始没有考虑到的细节。也正是因为一开始梳理清楚的思路和需求，做好了版本迭代记录，让工程向着有序和收敛的方向发展，而不是向着代码爆炸的”屎山”方向崩溃。不管怎么样，这个项目自认为算是我本科阶段做的较为完整的项目之一，融合了工程、数据结构、算法的知识为一体。但也不可否认的是，在只做了一个月时间的情况下，这个项目也不可能做到尽善尽美到可以到商业化使用的地步。内部的很多细节还有待优化的地方，例如在后期赶工期的时候，为了快速实现组网和数据传输的效果，直接定死了数据包的大小，也没有去实现大数据包的分割机制，类似这样的优化问题有很多，我也意识到这些细节都是一个无底洞，我目前也不可能投入那么多时间精力去维护这些细节。幸运的是，我成功的在星闪体验官的活动结束前实现了WiFi Mesh的组网和通讯功能，打造好了Soft Mesh的项目框架。不幸的是，我没有时间把这个工程移植到星闪上，去验证我的框架。</p>
 <p>当然，我也在社区上看到了一些别的小伙伴在Mesh网络上的尝试，有的使用beacon类似蓝牙那样的泛洪的思路构建Mesh，也有人把Mesh的根节点，中转节点、普通节点的角色写死，不同的角色使用不同的代码，由人工设计不同节点在不同场景下的角色。这样做虽然省去了节点自主协商等步骤，但这样做显然也把Mesh组网的精华部分都抛弃了，灵活性大大降低。</p>
-<h3 id="4-2-展望（Todo-List）"><a href="#4-2-展望（Todo-List）" class="headerlink" title="4.2 展望（Todo List）"></a>4.2 展望（Todo List）</h3><ul>
-<li><input disabled="" type="checkbox"> 进一步解耦Soft Mesh协议</li>
-<li><input disabled="" type="checkbox"> 适配更多具备WiFi能力的开发板</li>
-<li><input disabled="" type="checkbox"> 适配星闪、蓝牙技术</li>
-<li><input disabled="" type="checkbox"> 移植协议到移动端APP，使得在手机上可视化Mesh网络数据</li>
-<li><input disabled="" type="checkbox"> 利用hi3863三合一的通讯能力，实现异构组网能力</li>
-</ul>
+<h3 id="4-2-展望（Todo-List）"><a href="#4-2-展望（Todo-List）" class="headerlink" title="4.2 展望（Todo List）"></a>4.2 展望（Todo List）</h3><p>🔄 进一步解耦Soft Mesh协议<br>🔄 适配更多具备WiFi能力的开发板<br>🔄 适配星闪、蓝牙技术<br>🔄 移植协议到移动端APP，使得在手机上可视化Mesh网络数据<br>🔄 利用hi3863三合一的通讯能力，实现异构组网能力</p>
+<h3 id="4-3-项目开源地址"><a href="#4-3-项目开源地址" class="headerlink" title="4.3 项目开源地址"></a>4.3 项目开源地址</h3><p>Gitee：<a target="_blank" rel="noopener" href="https://gitee.com/nebula-yong/soft_mesh">https://gitee.com/nebula-yong/soft_mesh</a></p>
+<p>Github：<a target="_blank" rel="noopener" href="https://github.com/Nebula-Yong/Soft_Mesh">https://github.com/Nebula-Yong/Soft_Mesh</a></p>
 
                 
             </div>
@@ -789,16 +785,16 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/new_blog/tags/soft-mesh/">
-                        <span class="chip bg-color">soft_mesh</span>
-                    </a>
-                    
                     <a href="/new_blog/tags/%E5%BC%80%E6%BA%90%E9%B8%BF%E8%92%99/">
                         <span class="chip bg-color">开源鸿蒙</span>
                     </a>
                     
                     <a href="/new_blog/tags/OpenHarmony/">
                         <span class="chip bg-color">OpenHarmony</span>
+                    </a>
+                    
+                    <a href="/new_blog/tags/soft-mesh/">
+                        <span class="chip bg-color">soft_mesh</span>
                     </a>
                     
                     <a href="/new_blog/tags/Hi3863/">
